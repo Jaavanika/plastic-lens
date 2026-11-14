@@ -28,7 +28,7 @@ Because this is a solo project, sections are tagged by priority:
 
 | #  | Section                                 | Week | Depends on | Priority | Status      |
 | -: | --------------------------------------- | ---: | ---------- | -------- | ----------- |
-|  0 | Project setup                           |    1 | --         | Core     | Not started |
+|  0 | Project setup                           |    1 | --         | Core     | In progress |
 |  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Not started |
 |  2 | Dataset preparation                     |    2 | 0          | Core     | Not started |
 |  3 | Model training and evaluation           |    3 | 2          | Core     | Not started |
@@ -56,20 +56,30 @@ admin tasks are done in the Firebase Console.
 
 Tasks:
 
-- [ ] Create the folder structure from README §16.
-- [ ] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, `*.onnx` > 50 MB, `.env`, `google-services.json`).
+Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/lock problems).
+
+- [x] Create the folder structure from README §16.
+- [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
 - [ ] Create a GitHub repository and push.
-- [ ] Install Flutter SDK + Android Studio; run `flutter doctor` until clean.
-- [ ] Install Python 3.11; create `ai_model/.venv`; install `torch`, `torchvision`, `timm`, `onnx`, `onnxruntime`, `scikit-learn`, `matplotlib`, `pandas`.
-- [ ] Create a Firebase project (Android app registered, package name decided e.g. `com.plasticlens.app`).
-- [ ] Decide the app name, colour palette, and logo.
+- [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
+- [ ] Android cmdline-tools (Android Studio SDK Manager) + `flutter doctor --android-licenses`.
+- [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
+- [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
+- [ ] Create a Firebase project `plasticlens`.
+- [x] App name and palette: **PlasticLens**, green + ocean blue. Logo: TBD in Section 1.
+
+Activate the Python environment:
+
+```powershell
+C:\src\venvs\plasticlens\Scripts\Activate.ps1
+```
 
 Deliverables: repo on GitHub, `flutter doctor` passing, Python env working.
 
 Done when:
 
 - [ ] `flutter create` app runs on an emulator or phone.
-- [ ] `python -c "import torch, timm"` works.
+- [x] `python -c "import torch, timm"` works.
 
 ---
 
