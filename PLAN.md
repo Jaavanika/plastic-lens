@@ -63,7 +63,7 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 - [ ] Create a GitHub repository and push.
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
 - [x] Android cmdline-tools installed. SDK reached via junction `C:\Android\Sdk` (the real path has a space); `flutter config --android-sdk` and `ANDROID_HOME` point to it.
-- [ ] `flutter doctor --android-licenses` (accept remaining licenses; you must do this yourself).
+- [x] `flutter doctor --android-licenses` (all accepted; Android toolchain passes).
 - [x] Emulator `PlasticLens_Pixel` (Pixel 7, Android 36).
 - [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
 - [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
