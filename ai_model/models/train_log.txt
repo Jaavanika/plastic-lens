@@ -26,3 +26,14 @@ At line:1 char:386
 [finetune] epoch 16 loss 0.041 | val acc 0.872 f1 0.873 loss 0.655 | 93.5s  *
 [finetune] epoch 17 loss 0.037 | val acc 0.886 f1 0.883 loss 0.639 | 99.7s  *
 [finetune] epoch 18 loss 0.033 | val acc 0.866 f1 0.861 loss 0.583 | 84.9s
+[finetune] epoch 19 loss 0.015 | val acc 0.872 f1 0.867 loss 0.597 | 87.3s
+[finetune] epoch 20 loss 0.017 | val acc 0.888 f1 0.884 loss 0.592 | 96.0s  *
+[finetune] epoch 21 loss 0.015 | val acc 0.864 f1 0.861 loss 0.634 | 105.5s
+[finetune] epoch 22 loss 0.014 | val acc 0.868 f1 0.863 loss 0.608 | 124.9s
+[finetune] epoch 23 loss 0.009 | val acc 0.870 f1 0.868 loss 0.627 | 112.7s
+[finetune] epoch 24 loss 0.017 | val acc 0.875 f1 0.870 loss 0.571 | 90.0s
+[finetune] epoch 25 loss 0.032 | val acc 0.868 f1 0.864 loss 0.566 | 83.1s
+[finetune] epoch 26 loss 0.010 | val acc 0.881 f1 0.875 loss 0.567 | 94.5s
+[finetune] epoch 27 loss 0.009 | val acc 0.877 f1 0.876 loss 0.567 | 84.6s
+early stop: no val F1 improvement for 7 epochs
+best val macro-F1 0.8840 -> C:\dev\plastic-lens\ai_model\models\mobilenetv3_v1.pt

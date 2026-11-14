@@ -1,0 +1,7 @@
+{
+  "n": 100,
+  "max_abs_diff": 3.993511199951172e-06,
+  "top1_mismatches": 0,
+  "pc_cpu_latency_ms_median": 3.9815999998609186,
+  "passed": true
+}

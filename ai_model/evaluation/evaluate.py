@@ -38,8 +38,8 @@ FIGURES = AI.parent / "documentation" / "figures"
 NON_PLASTIC = CLASSES.index("non_plastic")
 
 # Target accuracy of the predictions shown at each level (README §7.5).
-HIGH_TARGET = 0.90
-MEDIUM_TARGET = 0.75
+HIGH_TARGET = 0.95
+MEDIUM_TARGET = 0.85
 
 
 def load_model(run: str):

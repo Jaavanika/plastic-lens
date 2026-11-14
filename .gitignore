@@ -50,3 +50,6 @@ android_app/android/app/release/
 node_modules/
 .firebase/
 firebase-debug.log
+
+# Model export copies (the app's copy lives in android_app/assets/models)
+ai_model/models/*.onnx

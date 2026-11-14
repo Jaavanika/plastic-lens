@@ -31,14 +31,14 @@ Because this is a solo project, sections are tagged by priority:
 |  0 | Project setup                           |    1 | --         | Core     | Done        |
 |  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Done        |
 |  2 | Dataset preparation                     |    2 | 0          | Core     | Done        |
-|  3 | Model training and evaluation           |    3 | 2          | Core     | In progress |
-|  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | In progress |
-|  5 | Material database and result screen     |    4 | 4          | Core     | In progress |
+|  3 | Model training and evaluation           |    3 | 2          | Core     | Done |
+|  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | Done (phone latency pending) |
+|  5 | Material database and result screen     |    4 | 4          | Core     | Done |
 |  6 | Firebase auth and cloud data            |    5 | 1          | Core     | Code done; needs your Firebase setup |
 |  7 | FastAPI backend and LLM enrichment      |    5 | 4, 6       | Stretch  | Code done; needs deploy |
 |  8 | History, collection, sync               |    6 | 5, 6       | Core     | Done (verify on phone) |
 |  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
-| 10 | Landing website                         |    7 | 5          | Core     | In progress |
+| 10 | Landing website                         |    7 | 5          | Core     | Done (deploy needs your login) |
 | 11 | Testing, hardening, release, report     |    8 | all        | Core     | Not started |
 
 Sections 1 and 2 can run in parallel: while the model trains on Colab,
@@ -146,16 +146,16 @@ Tasks:
 - [x] Early stopping on validation F1; save best checkpoint.
 - [x] ~~Train on Google Colab~~ Trained locally on the 12-core CPU instead (~95 s/epoch, no Google login needed). `training/colab_train.ipynb` is ready for GPU retraining.
 - [x] `evaluation/evaluate.py`: accuracy, per-class precision/recall/F1, confusion matrix image.
-- [x] Temperature scaling on validation set; report calibration (ECE). *(script written; runs after training)*
-- [x] Pick High / Medium / Low confidence thresholds from validation data. *(script written; runs after training)*
+- [x] Temperature scaling on validation set; report calibration (ECE): T = 2.733, val ECE 0.085 → 0.048, test ECE 0.034.
+- [x] Pick High / Medium / Low confidence thresholds from validation data: High ≥ 0.70 (97.3 % accurate on test), Medium 0.30–0.70, Low < 0.30.
 - [ ] *(Optional)* Compare with EfficientNet-B0 (cell ready in the Colab notebook).
 
 Deliverables: `models/mobilenetv3_v1.pt`, `labels.json`, metrics report + confusion matrix in `model_card.md`.
 
 Done when:
 
-- [ ] Test-set metrics are recorded (test set used only once). *(training in progress: best val macro-F1 0.883 at epoch 17)*
-- [ ] Thresholds and temperature value are written down.
+- [x] Test-set metrics are recorded: **accuracy 0.916, macro-F1 0.915** (best epoch 20 of 27), per-class table and confusion matrix in `documentation/model_card.md`.
+- [x] Thresholds and temperature value are written down (`labels.json`, model card).
 
 ---
 
@@ -166,9 +166,9 @@ Done when:
 Tasks:
 
 - [x] `export/to_onnx.py`: fixed input `1×3×224×224`; temperature + softmax inside the graph; ONNX IR 8 for the app's ORT 1.15.
-- [x] `export/verify_onnx.py`: compare PyTorch vs ONNX on 100 test images (max diff < 1e-4, same top-1); also writes Dart parity fixtures. *(runs after training)*
-- [ ] Copy `plasticlens.onnx` + `labels.json` to `android_app/assets/models/` (done by `to_onnx.py`).
-- [x] Flutter `OnnxClassifier`: load model once, preprocess (EXIF rotate, resize, normalise, same as Python), run, return probabilities.
+- [x] `export/verify_onnx.py`: 100 test images, max diff 4.0e-6, 0 top-1 mismatches; also writes Dart parity fixtures.
+- [x] Copy `plasticlens.onnx` (16.8 MB) + `labels.json` to `android_app/assets/models/` (done by `to_onnx.py`).
+- [x] Flutter `OnnxClassifier`: load model once, preprocess (EXIF rotate, Pillow-equivalent bilinear resize ported to Dart, normalise), run, return probabilities.
 - [x] Apply threshold policy → `High / Medium / Low / NonPlastic` result state (unit-tested).
 - [x] Run preprocessing in an isolate and inference via `runAsync`; progress indicator on the preview screen.
 - [ ] Measure latency on a physical phone (shown in Profile → About after a scan). **Needs your phone.**
@@ -178,8 +178,8 @@ Deliverables: app that classifies a real photo offline.
 
 Done when:
 
-- [ ] Same image gives the same top-1 class in Python and in the app (`test/preprocess_parity_test.dart` + emulator check).
-- [ ] Works in airplane mode.
+- [x] Same image gives the same top-1 class in Python and in the app: 7/7 on the emulator (`integration_test/classifier_parity_test.dart`), plus `test/preprocess_parity_test.dart`.
+- [x] Works in airplane mode (integration test run with airplane mode on; ~115 ms per scan on the emulator).
 
 ---
 
@@ -200,7 +200,7 @@ Deliverables: end-to-end offline scan → full result.
 
 Done when:
 
-- [ ] Every class shows complete info; low-confidence and non-plastic states display correctly. *(widget-tested with dummy data; final check with the real model)*
+- [x] Every class shows complete info; low-confidence and non-plastic states display correctly (widget tests + real scan on the emulator: LDPE 93.5 %, High).
 
 ---
 
@@ -297,19 +297,19 @@ Done when:
 
 Tasks:
 
-- [ ] Hero: ocean gradient + SVG waves (own artwork, no licensed photo needed), phone mock-up with a real PlasticLens screenshot *(screenshot after Section 4)*, headline, tagline, download button.
+- [x] Hero: ocean gradient + SVG waves (own artwork, no licensed photo needed), phone mock-up with a real PlasticLens screenshot, headline, tagline, download button.
 - [x] How it works (Snap → Identify → Recycle).
 - [x] Features and supported plastics (6 resin-code cards).
 - [x] Why it matters (facts with sources: UNEP, OECD 2022, Pew/SYSTEMIQ 2020).
 - [x] Download section (GitHub Releases APK link), footer with privacy policy (`privacy.html`).
-- [ ] Responsive (phone, tablet, desktop), accessible, fast. *(built mobile-first; Lighthouse check pending)*
+- [x] Responsive (phone, tablet, desktop), accessible, fast.
 - [ ] Deploy to Firebase Hosting (`firebase.json` ready). **Needs `firebase login`.**
 
 Deliverables: live URL.
 
 Done when:
 
-- [ ] Lighthouse ≥ 90 for performance and accessibility; no layout break at 360 px width.
+- [x] Lighthouse ≥ 90 for performance and accessibility: **100 / 100 / 100 / 100** (perf, a11y, best practices, SEO) on mobile and desktop; checked at a 360 px viewport.
 
 ---
 
@@ -320,11 +320,11 @@ Done when:
 Tasks:
 
 - [ ] Run image test scenarios (README §15.2) on the real app; record results.
-- [ ] Application tests (README §15.3); `flutter test` widget tests. *(24 Flutter tests passing so far)*
+- [ ] Application tests (README §15.3); `flutter test` widget tests. *(32 Flutter tests + 1 on-device test passing so far)*
 - [ ] Test on at least 2 physical Android devices. **Needs your phones.**
 - [ ] Security review: rules, token checks, no secrets in APK.
 - [ ] Build signed release APK. *(keystore must be created by you and kept private)*
-- [ ] Finish `model_card.md`, `architecture.md`, `api_documentation.md`. *(architecture + API done; model card needs final metrics)*
+- [x] Finish `model_card.md`, `architecture.md`, `api_documentation.md`.
 - [ ] Prepare capstone report and demo video. **Report draft by me; demo video needs you.**
 
 Deliverables: signed APK, documentation, report.

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,9 +18,15 @@ import 'services/progress_service.dart';
 import 'services/scan_store.dart';
 
 /// Firebase is optional: without android/app/google-services.json the app
-/// runs fully offline with local storage only.
+/// runs fully offline with local storage only. The native side reports
+/// whether the config exists, because initializeApp() hangs without it.
 Future<bool> _initFirebase() async {
   try {
+    final configured = await const MethodChannel('plasticlens/config').invokeMethod<bool>('hasFirebaseConfig');
+    if (configured != true) {
+      debugPrint('No google-services.json: running local-only');
+      return false;
+    }
     await Firebase.initializeApp();
     return true;
   } catch (e) {

@@ -1,0 +1,32 @@
+{
+  "model_version": "mobilenetv3-v1",
+  "classes": [
+    "PET",
+    "HDPE",
+    "PVC",
+    "LDPE",
+    "PP",
+    "PS",
+    "non_plastic"
+  ],
+  "temperature": 2.733,
+  "thresholds": {
+    "high": 0.7,
+    "medium": 0.3
+  },
+  "input": {
+    "size": 224,
+    "layout": "NCHW",
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "resize": "bilinear, straight to size x size (no crop), after EXIF rotation"
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "model_version": "mobilenetv3-v1",
+  "architecture": "mobilenetv3_large_100",
+  "best_epoch": 20,
+  "val_at_best_epoch": {
+    "loss": 0.5923835937875496,
+    "acc": 0.8881431767337807,
+    "macro_f1": 0.8840468989685623
+  },
+  "temperature": 2.7330482006073,
+  "thresholds": {
+    "high": 0.7,
+    "medium": 0.3,
+    "high_target_acc": 0.95,
+    "medium_target_acc": 0.85
+  },
+  "val_ece": {
+    "before": 0.08478455990552902,
+    "after": 0.04794866591691971
+  },
+  "test": {
+    "n": 450,
+    "accuracy": 0.9155555555555556,
+    "macro_f1": 0.9154834730128846,
+    "polymer_only_accuracy": 0.9140625,
+    "ece_before": 0.05240757018327713,
+    "ece_after": 0.03443646803498268,
+    "per_class": {
+      "PET": {
+        "precision": 0.9342105263157895,
+        "recall": 0.8452380952380952,
+        "f1-score": 0.8875,
+        "support": 84.0
+      },
+      "HDPE": {
+        "precision": 0.8448275862068966,
+        "recall": 0.9607843137254902,
+        "f1-score": 0.8990825688073395,
+        "support": 51.0
+      },
+      "PVC": {
+        "precision": 0.972972972972973,
+        "recall": 0.9,
+        "f1-score": 0.935064935064935,
+        "support": 40.0
+      },
+      "LDPE": {
+        "precision": 0.8765432098765432,
+        "recall": 0.9861111111111112,
+        "f1-score": 0.9281045751633987,
+        "support": 72.0
+      },
+      "PP": {
+        "precision": 0.9767441860465116,
+        "recall": 0.8235294117647058,
+        "f1-score": 0.8936170212765957,
+        "support": 51.0
+      },
+      "PS": {
+        "precision": 0.9010989010989011,
+        "recall": 0.9534883720930233,
+        "f1-score": 0.9265536723163842,
+        "support": 86.0
+      },
+      "non_plastic": {
+        "precision": 0.953125,
+        "recall": 0.9242424242424242,
+        "f1-score": 0.9384615384615385,
+        "support": 66.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        71,
+        6,
+        0,
+        5,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        49,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        36,
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        71,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        3,
+        42,
+        5,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0,
+        82,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        2,
+        61
+      ]
+    ],
+    "plastic_gate": {
+      "plastic_detected_recall": 0.9921875,
+      "non_plastic_recall": 0.9242424242424242,
+      "non_plastic_precision": 0.953125
+    },
+    "policy": {
+      "non_plastic": {
+        "share": 0.14222222222222222,
+        "accuracy": 0.953125
+      },
+      "high": {
+        "share": 0.74,
+        "accuracy": 0.972972972972973
+      },
+      "medium": {
+        "share": 0.10666666666666667,
+        "accuracy": 0.5416666666666666
+      },
+      "low": {
+        "share": 0.011111111111111112,
+        "accuracy": 0.2
+      }
+    }
+  },
+  "checkpoint_mb": 17.0
+}

@@ -28,15 +28,15 @@ void main() {
         for (var i = 0; i < plane; i++) {
           sum += x[c * plane + i];
         }
-        // Mean of a normalised channel: within 0.03 std units of Python.
-        expect(sum / plane, closeTo((f['channel_mean'] as List)[c] as num, 0.03), reason: 'channel $c mean');
+        // resizeLikePil ports Pillow's filter; what remains is JPEG decoder
+        // rounding (Dart `image` vs libjpeg), about half a grey level on average.
+        expect(sum / plane, closeTo((f['channel_mean'] as List)[c] as num, 0.015), reason: 'channel $c mean');
       }
 
-      // Individual pixels can differ slightly because resampling filters
-      // are not bit-identical; 0.25 std units ≈ 15 of 255 grey levels.
+      // Single pixels: within ~4 grey levels (0.07 std units).
       (f['samples'] as Map<String, dynamic>).forEach((key, value) {
         final [c, i, j] = key.split(',').map(int.parse).toList();
-        expect(x[c * plane + i * 224 + j], closeTo(value as num, 0.25), reason: 'pixel $key');
+        expect(x[c * plane + i * 224 + j], closeTo(value as num, 0.07), reason: 'pixel $key');
       });
     });
   }

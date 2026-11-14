@@ -81,3 +81,99 @@ C:\src\venvs\plasticlens\Scripts\Activate.ps1
 cd ai_model\preprocessing
 python download.py; python inspect_data.py; python prepare.py; python split.py
 ```
+
+## 2. Model
+
+| | |
+| --- | --- |
+| Version | `mobilenetv3-v1` |
+| Architecture | `timm` `mobilenetv3_large_100`, ImageNet-pretrained, new 7-class head |
+| Classes (output order) | PET, HDPE, PVC, LDPE, PP, PS, non_plastic |
+| Input | 1×3×224×224 RGB, EXIF-rotated, bilinear resize to 224×224 (no crop), ImageNet mean/std |
+| Output | Calibrated probabilities (temperature scaling and softmax are inside the ONNX graph) |
+| Size | 17.0 MB PyTorch checkpoint, 16.8 MB ONNX |
+| Intended use | Suggest the likely resin type of one household plastic item in a photo, to support sorting and learning. Not a laboratory test. |
+| Out of scope | Resin code 7 and mixed or multi-layer plastics, several items in one photo, industrial waste streams |
+
+### Training (`training/train.py`)
+
+- Hardware: laptop CPU (12 threads), about 95 s per epoch, 27 epochs, about 45 minutes in total.
+- Stage 1: head only (`conv_head` + classifier), 4 epochs, AdamW, one-cycle schedule, max LR 1e-3.
+- Stage 2: whole network, max LR 3e-4, weight decay 1e-4, early stopping on validation macro-F1 (patience 7).
+- Loss: cross-entropy weighted by inverse class frequency (PVC weight 1.73, PS 0.74).
+- Augmentation (train only): random resized crop (scale 0.55–1), horizontal flip, ±15° rotation, colour jitter, 3 % greyscale.
+- Best epoch: **20** (validation accuracy 0.888, macro-F1 0.884).
+
+## 3. Evaluation (`evaluation/evaluate.py`)
+
+The test set (450 images) was not used for training, checkpoint selection,
+calibration or threshold selection. See the transparency note below about the
+threshold targets.
+
+| Metric | Test |
+| --- | ---: |
+| Accuracy | **0.916** |
+| Macro F1 | **0.915** |
+| Polymer-only accuracy (true class is a polymer) | 0.914 |
+| ECE before → after temperature scaling | 0.052 → **0.034** |
+| Plastic detected when the item is plastic | 0.992 |
+| Non-plastic recall / precision | 0.924 / 0.953 |
+
+| Class | Precision | Recall | F1 | Support |
+| --- | ---: | ---: | ---: | ---: |
+| PET | 0.934 | 0.845 | 0.887 | 84 |
+| HDPE | 0.845 | 0.961 | 0.899 | 51 |
+| PVC | 0.973 | 0.900 | 0.935 | 40 |
+| LDPE | 0.877 | 0.986 | 0.928 | 72 |
+| PP | 0.977 | 0.824 | 0.894 | 51 |
+| PS | 0.901 | 0.953 | 0.927 | 86 |
+| non_plastic | 0.953 | 0.924 | 0.938 | 66 |
+
+![Confusion matrix](figures/confusion_matrix.png)
+
+Main confusions: PET → HDPE (6) and PET → LDPE (5), mostly crumpled clear
+bottles and films; PP → PS (5) and PP → LDPE (3), small white or translucent
+fragments in litter scenes; PS → PET (4).
+
+### Calibration and thresholds
+
+- Temperature **T = 2.733**, fitted on the validation set (NLL). Validation ECE 0.085 → 0.048.
+- Thresholds, chosen on the validation set, applied to the top probability when it is a polymer:
+  - **High ≥ 0.70**: the lowest threshold whose validation predictions are ≥ 95 % accurate.
+  - **Medium 0.30–0.70**: shown as "Please verify".
+  - **Low < 0.30**: shown as "Unable to identify reliably".
+  - If `non_plastic` is the top class, the app shows "No plastic detected".
+- How the policy behaves on the test set:
+
+| Bucket | Share of test images | Accuracy |
+| --- | ---: | ---: |
+| High | 74.0 % | **97.3 %** |
+| Medium (please verify) | 10.7 % | 54.2 % |
+| Low (unable to identify) | 1.1 % | 20.0 % |
+| Non-plastic | 14.2 % | 95.3 % |
+
+Transparency note: the first evaluation run used targets of 90 % / 75 %.
+These gave a "High" cut-off of only 0.36, which reads badly on a result
+card ("Likely PET, 36 %"). The targets were raised to 95 % / 85 % and the
+thresholds re-picked **on the validation set only**. Accuracy, F1 and ECE
+are unaffected, because thresholds do not change the predicted class; only the
+policy table above was re-scored.
+
+## 4. Deployment checks
+
+| Check | Result |
+| --- | --- |
+| PyTorch vs ONNX, 100 test images (`export/verify_onnx.py`) | max abs diff 4.0e-6, 0 top-1 mismatches |
+| Dart preprocessing vs Python (`test/preprocess_parity_test.dart`) | channel means within 0.015 std, pixels within ~4 grey levels (Pillow's resampling ported to Dart) |
+| On-device ONNX, airplane mode, emulator (`integration_test/classifier_parity_test.dart`) | 7/7 same top-1 as Python, probabilities within 0.05 |
+| Latency, Pixel 7 emulator on a laptop, preprocess + inference | median ~115 ms (first scan ~600 ms including model load) |
+| Latency, physical phone | *to be measured (PLAN Section 4)* |
+
+## 5. Limitations and risks
+
+- **Not a chemical test.** Different plastics can look identical, so the app always asks users to check the printed resin code.
+- **Dataset domain.** The plastic photos come from a single dataset (PlasticWaste-DB), and many show litter on soil. Clean household items photographed indoors are under-represented. Some PVC images are product renders.
+- **Labels** come from the dataset authors and could not be checked against resin codes.
+- **Non-plastic coverage** is limited to glass, paper, cardboard and metal (TrashNet). Wood, fabric, food and similar items may be misread.
+- **One item per photo.** There is no object detector, so cluttered scenes reduce accuracy.
+- Misuse risk is low. The main harm would be wrong recycling advice, which the uncertainty states and the "check your local scheme" note are there to reduce.
