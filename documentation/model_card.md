@@ -177,3 +177,42 @@ policy table above was re-scored.
 - **Non-plastic coverage** is limited to glass, paper, cardboard and metal (TrashNet). Wood, fabric, food and similar items may be misread.
 - **One item per photo.** There is no object detector, so cluttered scenes reduce accuracy.
 - Misuse risk is low. The main harm would be wrong recycling advice, which the uncertainty states and the "check your local scheme" note are there to reduce.
+
+## 6. Image test scenarios (README §15.2)
+
+`evaluation/scenarios.py` runs the shipped ONNX model and threshold policy
+on the 450 held-out test images, either transformed or as a selected subset.
+"Unsure" means the app shows *Please verify* or *Unable to identify
+reliably*. "Confident and wrong" is the harmful case: High (or No plastic)
+with the wrong class.
+
+| Scenario | n | Accuracy | Shown as unsure | Confident and wrong |
+| --- | ---: | ---: | ---: | ---: |
+| Baseline (test set as-is) | 450 | 91.6 % | 11.8 % | 2.7 % |
+| Low light (35 % brightness) | 450 | 86.2 % | 22.2 % | 4.9 % |
+| Very low light (15 %) | 450 | 62.9 % | 48.2 % | 10.0 % |
+| Blurred (Gaussian r = 3) | 450 | 75.1 % | 34.0 % | 5.3 % |
+| Motion-like blur (box r = 6) | 450 | 70.9 % | 41.8 % | 6.2 % |
+| Heavy JPEG (quality 10) | 450 | 79.1 % | 26.2 % | 6.0 % |
+| Rotated 90° | 450 | 89.1 % | 15.1 % | 5.8 % |
+| Overexposed (180 %) | 450 | 81.6 % | 23.8 % | 4.9 % |
+| Greyscale | 450 | 87.6 % | 21.6 % | 3.3 % |
+| Dark plastics (mean brightness < 0.30) | 8 | 62.5 % | 37.5 % | 0.0 % |
+| PET (mostly transparent bottles) | 84 | 84.5 % | 20.2 % | 7.1 % |
+| Non-plastic objects | 66 | 92.4 % | 6.1 % | 1.5 % |
+| Multiple objects (whole photo, 2+ items) | 41 | 70.7 % | 19.5 % | **17.1 %** |
+
+Findings:
+
+- Image quality problems mostly push results into the *unsure* states instead
+  of producing confident errors. Even at 15 % brightness only 10 % of results
+  are confidently wrong.
+- **Several items in one photo is the weakest case** (17 % confidently wrong).
+  The scanner asks users to "Fill the frame with one item". An object detector
+  (README §5, optional YOLOv8n) would be the next improvement.
+- Transparent PET is harder than the average class (84.5 %), as README §19 predicted.
+- The dark-plastics subset is too small (8 images) to draw conclusions from.
+  It should be re-tested with real photos.
+- Crushed objects, plastic bags and unseen backgrounds are covered only by
+  whatever the dataset already contains. They need real photos taken with the
+  app (PLAN Section 11).

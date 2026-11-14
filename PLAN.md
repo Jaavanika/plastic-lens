@@ -39,7 +39,7 @@ Because this is a solo project, sections are tagged by priority:
 |  8 | History, collection, sync               |    6 | 5, 6       | Core     | Done (verify on phone) |
 |  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
 | 10 | Landing website                         |    7 | 5          | Core     | Done (deploy needs your login) |
-| 11 | Testing, hardening, release, report     |    8 | all        | Core     | Not started |
+| 11 | Testing, hardening, release, report     |    8 | all        | Core     | Mostly done; phone tests + video need you |
 
 Sections 1 and 2 can run in parallel: while the model trains on Colab,
 work on the Flutter UI. Section 10 can start any time after the result
@@ -319,16 +319,28 @@ Done when:
 
 Tasks:
 
-- [ ] Run image test scenarios (README §15.2) on the real app; record results.
-- [ ] Application tests (README §15.3); `flutter test` widget tests. *(32 Flutter tests + 1 on-device test passing so far)*
+- [x] Run image test scenarios (README §15.2): simulated on the test set with the shipped model + policy (`evaluation/scenarios.py`, model card §6). *Real-photo scenarios: do on your phone.*
+- [x] Application tests (README §15.3); `flutter test` widget tests: 32 Flutter + 1 on-device + 9 rules + 21 backend tests passing; matrix in `documentation/testing.md`.
 - [ ] Test on at least 2 physical Android devices. **Needs your phones.**
-- [ ] Security review: rules, token checks, no secrets in APK.
-- [ ] Build signed release APK. *(keystore must be created by you and kept private)*
+- [x] Security review: rules (emulator tests), token checks (backend tests), no secrets in the release APK or git history (scanned).
+- [x] Build signed release APK: arm64 50 MB, armv7 44 MB, x86_64 54 MB, universal 112 MB; keystore in `C:\dev\keys\` (**back it up**).
 - [x] Finish `model_card.md`, `architecture.md`, `api_documentation.md`.
-- [ ] Prepare capstone report and demo video. **Report draft by me; demo video needs you.**
+- [ ] Prepare capstone report and demo video. Report draft: `documentation/capstone_report.md`. **Demo video needs you.**
 
 Deliverables: signed APK, documentation, report.
 
 Done when:
 
 - [ ] All boxes in README §21 "Project Completion Criteria" are ticked.
+
+---
+
+## Your remaining steps (cannot be done without your accounts or devices)
+
+1. **Back up** `C:\dev\keys\` (keystore + `key.properties.backup`) somewhere safe, e.g. a USB drive or a password manager. Losing it means you can never update the app.
+2. **GitHub release**: github.com/Jaavanika/plastic-lens → Releases → *Draft a new release* → tag `v1.0.0` → attach the APKs from `C:\dev\plastic-lens-release\` → paste `RELEASE_NOTES.md` → Publish. The website's download button points here.
+3. **Firebase**: Console → Add app → Android, package `com.plasticlens.plastic_lens` → download `google-services.json` into `android_app/android/app/`. Then Authentication → enable **Email/Password** and **Google**; create a **Firestore** database and **Storage**. For Google sign-in, add the debug and release SHA-1 fingerprints (see `RELEASE_NOTES.md`).
+4. In a terminal: `cd firebase` → `npx firebase login` → `npm run deploy:rules` → `npm run deploy:hosting` (the website goes live at https://plasticlens-61083.web.app).
+5. *(Optional, Section 7)*: deploy `backend/` to Cloud Run or Render with your `ANTHROPIC_API_KEY`, run `backend/scripts/seed_firestore.py`, then rebuild the APK with `--dart-define=ENRICH_URL=<url>`.
+6. **Phones**: install `app-arm64-v8a-release.apk` on 2 phones and work through the checklist at the end of `documentation/testing.md`.
+7. Record the **demo video** and fill in the name, college and supervisor fields in `capstone_report.md`.

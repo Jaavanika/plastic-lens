@@ -858,20 +858,20 @@ Official documentation:
 
 ## 21. Project Completion Criteria
 
--   [ ] A user can register and sign in.
--   [ ] A user can capture or upload an image.
--   [ ] The app can run the AI model on Android, offline.
--   [ ] The app displays object, plastic presence, material, and confidence.
--   [ ] Uncertain and non-plastic inputs are handled safely.
--   [ ] The result page displays material information and recycling guidance.
--   [ ] Users can save and view scans.
--   [ ] Users can manage their collection.
--   [ ] Achievements and progress work correctly.
--   [ ] User data is protected by access controls.
--   [ ] Cloud synchronisation works when connectivity returns.
--   [ ] AI evaluation results and model version are documented.
--   [ ] The landing website is live and links to the app.
--   [ ] The application has been tested on physical Android devices.
+-   [ ] A user can register and sign in. *(implemented and tested against the emulator; needs `google-services.json` and the sign-in providers enabled)*
+-   [x] A user can capture or upload an image.
+-   [x] The app can run the AI model on Android, offline (airplane-mode integration test).
+-   [x] The app displays object, plastic presence, material, and confidence.
+-   [x] Uncertain and non-plastic inputs are handled safely.
+-   [x] The result page displays material information and recycling guidance.
+-   [x] Users can save and view scans.
+-   [x] Users can manage their collection.
+-   [x] Achievements and progress work correctly (scripted test).
+-   [x] User data is protected by access controls (rules tested in the emulator; deploy pending).
+-   [ ] Cloud synchronisation works when connectivity returns. *(passes against a fake Firestore; needs a live check)*
+-   [x] AI evaluation results and model version are documented (`documentation/model_card.md`).
+-   [ ] The landing website is live and links to the app. *(built, Lighthouse 100; deploy needs `firebase login`)*
+-   [ ] The application has been tested on physical Android devices. *(needs your phones)*
 
 ---
 

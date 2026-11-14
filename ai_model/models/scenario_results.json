@@ -1,0 +1,80 @@
+{
+  "baseline (test set as-is)": {
+    "n": 450,
+    "accuracy": 0.9155555555555556,
+    "shown_as_unsure": 0.11777777777777777,
+    "confident_and_wrong": 0.02666666666666667
+  },
+  "low light (35 % brightness)": {
+    "n": 450,
+    "accuracy": 0.8622222222222222,
+    "shown_as_unsure": 0.2222222222222222,
+    "confident_and_wrong": 0.04888888888888889
+  },
+  "very low light (15 %)": {
+    "n": 450,
+    "accuracy": 0.6288888888888889,
+    "shown_as_unsure": 0.4822222222222222,
+    "confident_and_wrong": 0.1
+  },
+  "blurred (Gaussian r=3)": {
+    "n": 450,
+    "accuracy": 0.7511111111111111,
+    "shown_as_unsure": 0.34,
+    "confident_and_wrong": 0.05333333333333334
+  },
+  "motion-like blur (box r=6)": {
+    "n": 450,
+    "accuracy": 0.7088888888888889,
+    "shown_as_unsure": 0.4177777777777778,
+    "confident_and_wrong": 0.06222222222222222
+  },
+  "heavy JPEG (quality 10)": {
+    "n": 450,
+    "accuracy": 0.7911111111111111,
+    "shown_as_unsure": 0.26222222222222225,
+    "confident_and_wrong": 0.06
+  },
+  "rotated 90\u00b0": {
+    "n": 450,
+    "accuracy": 0.8911111111111111,
+    "shown_as_unsure": 0.1511111111111111,
+    "confident_and_wrong": 0.057777777777777775
+  },
+  "overexposed (180 % brightness)": {
+    "n": 450,
+    "accuracy": 0.8155555555555556,
+    "shown_as_unsure": 0.23777777777777778,
+    "confident_and_wrong": 0.04888888888888889
+  },
+  "greyscale": {
+    "n": 450,
+    "accuracy": 0.8755555555555555,
+    "shown_as_unsure": 0.21555555555555556,
+    "confident_and_wrong": 0.03333333333333333
+  },
+  "dark plastics (mean brightness < 0.30)": {
+    "n": 8,
+    "accuracy": 0.625,
+    "shown_as_unsure": 0.375,
+    "confident_and_wrong": 0.0
+  },
+  "PET (mostly transparent bottles)": {
+    "n": 84,
+    "accuracy": 0.8452380952380952,
+    "shown_as_unsure": 0.20238095238095238,
+    "confident_and_wrong": 0.07142857142857142
+  },
+  "non-plastic objects": {
+    "n": 66,
+    "accuracy": 0.9242424242424242,
+    "shown_as_unsure": 0.06060606060606061,
+    "confident_and_wrong": 0.015151515151515152
+  },
+  "multiple objects (whole photo, 2+ items)": {
+    "n": 41,
+    "accuracy": 0.7073170731707317,
+    "shown_as_unsure": 0.1951219512195122,
+    "confident_and_wrong": 0.17073170731707318
+  }
+}
