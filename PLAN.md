@@ -29,8 +29,8 @@ Because this is a solo project, sections are tagged by priority:
 | #  | Section                                 | Week | Depends on | Priority | Status      |
 | -: | --------------------------------------- | ---: | ---------- | -------- | ----------- |
 |  0 | Project setup                           |    1 | --         | Core     | Done        |
-|  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Not started |
-|  2 | Dataset preparation                     |    2 | 0          | Core     | Not started |
+|  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Done        |
+|  2 | Dataset preparation                     |    2 | 0          | Core     | Done        |
 |  3 | Model training and evaluation           |    3 | 2          | Core     | Not started |
 |  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | Not started |
 |  5 | Material database and result screen     |    4 | 4          | Core     | Not started |
@@ -58,7 +58,7 @@ Tasks:
 
 Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/lock problems).
 
-- [x] Create the folder structure from README §16.
+- [x] Create the folder structure from README Â§16.
 - [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
 - [x] Create a GitHub repository and push (https://github.com/Jaavanika/plastic-lens).
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
@@ -66,7 +66,7 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 - [x] `flutter doctor --android-licenses` (all accepted; Android toolchain passes).
 - [x] Emulator `PlasticLens_Pixel` (Pixel 7, Android 36).
 - [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
-- [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
+- [x] `flutter create` â†’ `android_app/` (package `com.plasticlens.plastic_lens`).
 - [x] Create a Firebase project `plasticlens` (project ID `plasticlens-61083`, Spark plan).
 - [x] App name and palette: **PlasticLens**, green + ocean blue. Logo: TBD in Section 1.
 
@@ -91,20 +91,22 @@ Done when:
 
 Tasks:
 
-- [ ] Set up Material 3 theme (colours, fonts).
-- [ ] Bottom navigation: Home, Scan, Collection, History, Profile.
-- [ ] Home screen with Scan / Upload buttons and placeholder recent scans.
-- [ ] Scanner screen: camera preview (`camera` package) + gallery picker (`image_picker`), preview, retake/confirm.
-- [ ] Result screen matching the reference layout: image, card with Object / Plastic Presence / Plastic Type / Confidence, material panel below.
-- [ ] Material details, Collection, History, Profile screens with dummy data.
-- [ ] Camera and storage permission handling.
+- [x] Set up Material 3 theme (colours, fonts). Uses the `material_ui` package (Flutter 3.50's template), with green `#2E7D4F` and ocean `#0B6E99`.
+- [x] Bottom navigation: Home, Scan, Collection, History, Profile.
+- [x] Home screen with Scan / Upload buttons and placeholder recent scans.
+- [x] Scanner screen: camera preview (`camera` package) + gallery picker (`image_picker`), preview, retake/confirm.
+- [x] Result screen matching the reference layout: image, card with Object / Plastic Presence / Plastic Type / Confidence, material panel below.
+- [x] Material details, Collection, History, Profile screens with dummy data.
+- [x] Camera and storage permission handling. Gallery uses Android's photo picker, which needs no storage permission.
 
 Deliverables: clickable prototype APK.
 
 Done when:
 
-- [ ] You can take/pick a photo and land on a result screen showing fake data.
-- [ ] All screens reachable; no crashes on rotation or permission denial.
+- [x] You can take/pick a photo and land on a result screen showing fake data (tested on the emulator).
+- [x] All screens reachable; no crashes on rotation or permission denial (emulator; widget tests in `test/widget_test.dart`).
+
+Notes: `compileSdk = 37` because `permission_handler` requires it.
 
 ---
 
@@ -114,21 +116,21 @@ Done when:
 
 Tasks:
 
-- [ ] Download PlasticWaste-DB; check licence and annotation format.
-- [ ] Write `preprocessing/inspect.py`: count images per class, find corrupt files, show samples.
-- [ ] Crop objects using bounding boxes if available.
-- [ ] Remove duplicates (perceptual hash).
-- [ ] Add a `non_plastic` class from TrashNet glass/paper/cardboard/metal (~400 images).
-- [ ] *(Optional)* Photograph 20–50 own items per class, labelled from the printed resin code.
-- [ ] Write `preprocessing/split.py`: grouped 70/15/15 split; save as `train/ val/ test/` folders or a CSV manifest.
-- [ ] Record dataset statistics in `documentation/model_card.md`.
+- [x] Download PlasticWaste-DB; check licence and annotation format (`preprocessing/download.py`; CC BY 4.0; YOLOv8 oriented boxes).
+- [x] Write `preprocessing/inspect_data.py` (renamed from `inspect.py`, which would shadow Python's built-in `inspect` module): count images per class, find corrupt files, show samples.
+- [x] Crop objects using bounding boxes if available (`preprocessing/prepare.py`).
+- [x] Remove duplicates (perceptual hash).
+- [x] Add a `non_plastic` class from TrashNet glass/paper/cardboard/metal (440 images).
+- [ ] *(Optional)* Photograph 20â€“50 own items per class, labelled from the printed resin code.
+- [x] Write `preprocessing/split.py`: grouped 70/15/15 split; save as `train/ val/ test/` folders or a CSV manifest.
+- [x] Record dataset statistics in `documentation/model_card.md`.
 
 Deliverables: `ai_model/datasets/processed/` + `splits.csv` + statistics table.
 
 Done when:
 
-- [ ] Every image opens, every image has exactly one label.
-- [ ] No duplicate image appears in two splits.
+- [x] Every image opens, every image has exactly one label (checked by `split.py`).
+- [x] No duplicate image appears in two splits (groups + pHash check in `split.py`).
 
 ---
 
@@ -138,11 +140,11 @@ Done when:
 
 Tasks:
 
-- [ ] `training/dataset.py`: PyTorch `Dataset` + transforms (224×224, ImageNet normalisation, augmentation for train only).
+- [ ] `training/dataset.py`: PyTorch `Dataset` + transforms (224Ã—224, ImageNet normalisation, augmentation for train only).
 - [ ] `training/train.py`: load `timm` `mobilenetv3_large_100`, `num_classes=7`, weighted loss for imbalance.
 - [ ] Stage 1: train head only (frozen backbone). Stage 2: unfreeze and fine-tune with low LR.
 - [ ] Early stopping on validation F1; save best checkpoint.
-- [ ] Train on Google Colab (Runtime → T4 GPU). Keep the dataset zip and checkpoints on Google Drive so a Colab disconnect loses nothing.
+- [ ] Train on Google Colab (Runtime â†’ T4 GPU). Keep the dataset zip and checkpoints on Google Drive so a Colab disconnect loses nothing.
 - [ ] `evaluation/evaluate.py`: accuracy, per-class precision/recall/F1, confusion matrix image.
 - [ ] Temperature scaling on validation set; report calibration (ECE).
 - [ ] Pick High / Medium / Low confidence thresholds from validation data.
@@ -163,11 +165,11 @@ Done when:
 
 Tasks:
 
-- [ ] `export/to_onnx.py`: export with fixed input `1×3×224×224`; apply temperature inside the graph or in app code.
+- [ ] `export/to_onnx.py`: export with fixed input `1Ã—3Ã—224Ã—224`; apply temperature inside the graph or in app code.
 - [ ] `export/verify_onnx.py`: compare PyTorch vs ONNX outputs on 100 test images (max diff < 1e-4, same top-1).
 - [ ] Copy `plasticlens.onnx` + `labels.json` to `android_app/assets/models/`.
-- [ ] Flutter `ClassifierService`: load model once, preprocess (EXIF rotate, resize, normalise — identical to Python), run, softmax, return top-k.
-- [ ] Apply threshold policy → `High / Medium / Low / NonPlastic` result state.
+- [ ] Flutter `ClassifierService`: load model once, preprocess (EXIF rotate, resize, normalise â€” identical to Python), run, softmax, return top-k.
+- [ ] Apply threshold policy â†’ `High / Medium / Low / NonPlastic` result state.
 - [ ] Run inference off the UI thread (isolate); show progress indicator.
 - [ ] Measure latency on a physical phone.
 - [ ] Fallback if the ONNX plugin fails: convert to TFLite and use `tflite_flutter`.
@@ -187,14 +189,14 @@ Done when:
 
 Tasks:
 
-- [ ] Write `assets/data/plastic_types.json` for all 6 polymers (full name, resin code, properties, common items, recycling guidance, fact, eco tip) — original wording, with sources noted.
+- [ ] Write `assets/data/plastic_types.json` for all 6 polymers (full name, resin code, properties, common items, recycling guidance, fact, eco tip) â€” original wording, with sources noted.
 - [ ] `MaterialRepository` that reads the bundled JSON (later also Firestore).
 - [ ] Connect result screen to classifier output + material record.
-- [ ] Uncertain state UI ("Unable to identify reliably — try another photo") and non-plastic state.
+- [ ] Uncertain state UI ("Unable to identify reliably â€” try another photo") and non-plastic state.
 - [ ] Editable Object name field and "Correct the material" action.
 - [ ] Material Details screen with full information.
 
-Deliverables: end-to-end offline scan → full result.
+Deliverables: end-to-end offline scan â†’ full result.
 
 Done when:
 
@@ -212,7 +214,7 @@ Tasks:
 - [ ] Email/password and Google sign-in; sign-out; auth-gated navigation.
 - [ ] Create `users` document on first sign-in.
 - [ ] Upload `plastic_types` to Firestore (script).
-- [ ] Write Firestore security rules (README §10); test with the Firebase emulator.
+- [ ] Write Firestore security rules (README Â§10); test with the Firebase emulator.
 - [ ] Account deletion (delete user data + images).
 
 Deliverables: login flow + deployed security rules.
@@ -274,11 +276,11 @@ Done when:
 
 Tasks:
 
-- [ ] Achievement definitions in Firestore (first scan, all 6 polymers, 7-day streak, …).
+- [ ] Achievement definitions in Firestore (first scan, all 6 polymers, 7-day streak, â€¦).
 - [ ] Points rules (no points for unreliable predictions; points for verification and lessons).
 - [ ] Streak calculation (daily).
 - [ ] Learning library: short articles per polymer + recycling basics; simple quiz.
-- [ ] Notifications (FCM) for streak reminders — optional.
+- [ ] Notifications (FCM) for streak reminders â€” optional.
 
 Deliverables: Profile shows points, badges, streak; learning section works.
 
@@ -295,7 +297,7 @@ Done when:
 Tasks:
 
 - [ ] Hero: ocean background (licensed image), phone mock-up with a real PlasticLens screenshot, headline, tagline, download buttons.
-- [ ] How it works (Snap → Identify → Recycle).
+- [ ] How it works (Snap â†’ Identify â†’ Recycle).
 - [ ] Features and supported plastics (6 resin-code cards).
 - [ ] Why it matters (facts with sources).
 - [ ] Download section (APK link / Play Store when published), footer with privacy policy.
@@ -306,7 +308,7 @@ Deliverables: live URL.
 
 Done when:
 
-- [ ] Lighthouse ≥ 90 for performance and accessibility; no layout break at 360 px width.
+- [ ] Lighthouse â‰¥ 90 for performance and accessibility; no layout break at 360 px width.
 
 ---
 
@@ -316,8 +318,8 @@ Done when:
 
 Tasks:
 
-- [ ] Run image test scenarios (README §15.2) on the real app; record results.
-- [ ] Application tests (README §15.3); `flutter test` widget tests.
+- [ ] Run image test scenarios (README Â§15.2) on the real app; record results.
+- [ ] Application tests (README Â§15.3); `flutter test` widget tests.
 - [ ] Test on at least 2 physical Android devices.
 - [ ] Security review: rules, token checks, no secrets in APK.
 - [ ] Build signed release APK.
@@ -328,4 +330,4 @@ Deliverables: signed APK, documentation, report.
 
 Done when:
 
-- [ ] All boxes in README §21 "Project Completion Criteria" are ticked.
+- [ ] All boxes in README Â§21 "Project Completion Criteria" are ticked.
