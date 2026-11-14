@@ -62,7 +62,9 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 - [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
 - [ ] Create a GitHub repository and push.
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
-- [ ] Android cmdline-tools (Android Studio SDK Manager) + `flutter doctor --android-licenses`.
+- [x] Android cmdline-tools installed. SDK reached via junction `C:\Android\Sdk` (the real path has a space); `flutter config --android-sdk` and `ANDROID_HOME` point to it.
+- [ ] `flutter doctor --android-licenses` (accept remaining licenses; you must do this yourself).
+- [x] Emulator `PlasticLens_Pixel` (Pixel 7, Android 36).
 - [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
 - [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
 - [ ] Create a Firebase project `plasticlens`.
@@ -78,7 +80,7 @@ Deliverables: repo on GitHub, `flutter doctor` passing, Python env working.
 
 Done when:
 
-- [ ] `flutter create` app runs on an emulator or phone.
+- [x] `flutter create` app runs on an emulator or phone (emulator, 2026-11-14).
 - [x] `python -c "import torch, timm"` works.
 
 ---
