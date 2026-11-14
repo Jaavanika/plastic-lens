@@ -21,6 +21,7 @@ class ScanRecord {
     this.remoteImagePath,
     this.syncStatus = SyncStatus.pending,
     this.updatedAt,
+    this.secondOpinion,
   });
 
   final String id; // stable UUID; also the Firestore document id
@@ -40,9 +41,13 @@ class ScanRecord {
   SyncStatus syncStatus;
   DateTime? updatedAt;
 
+  /// Note from the online check when it disagreed with the on-device model.
+  String? secondOpinion;
+
   /// Whether this scan counts towards points and badges (README §14).
+  /// Medium ("please verify") and low results only count once verified.
   bool get isReliable =>
-      userVerified || state == ResultState.high || state == ResultState.medium;
+      userVerified || state == ResultState.high || state == ResultState.nonPlastic;
 
   Map<String, Object?> toMap() => {
         'id': id,
@@ -62,6 +67,7 @@ class ScanRecord {
         'remote_image_path': remoteImagePath,
         'sync_status': syncStatus.name,
         'updated_at': (updatedAt ?? createdAt).toUtc().toIso8601String(),
+        'second_opinion': secondOpinion,
       };
 
   factory ScanRecord.fromMap(Map<String, Object?> m) => ScanRecord(
@@ -85,6 +91,27 @@ class ScanRecord {
         updatedAt: m['updated_at'] == null
             ? null
             : DateTime.parse(m['updated_at'] as String).toLocal(),
+        secondOpinion: m['second_opinion'] as String?,
+      );
+
+  factory ScanRecord.fromFirestore(Map<String, dynamic> m) => ScanRecord(
+        id: m['scan_id'] as String,
+        itemName: m['item_name'] as String,
+        containsPlastic: m['contains_plastic'] as bool?,
+        plasticType: m['plastic_type'] as String?,
+        resinCode: (m['resin_code'] as num?)?.toInt(),
+        confidence: (m['confidence'] as num).toDouble(),
+        state: ResultState.values.byName(m['state'] as String),
+        modelVersion: m['model_version'] as String,
+        imagePath: '',
+        createdAt: DateTime.parse(m['created_at'] as String).toLocal(),
+        llmUsed: m['llm_used'] as bool? ?? false,
+        userVerified: m['user_verified'] as bool? ?? false,
+        inCollection: m['in_collection'] as bool? ?? false,
+        remoteImagePath: m['image_path'] as String?,
+        syncStatus: SyncStatus.synced,
+        updatedAt: m['updated_at'] == null ? null : DateTime.parse(m['updated_at'] as String).toLocal(),
+        secondOpinion: m['second_opinion'] as String?,
       );
 
   /// Shape stored in Firestore `users/{uid}/scans/{id}`.
@@ -104,5 +131,6 @@ class ScanRecord {
         'image_path': remoteImagePath,
         'created_at': createdAt.toUtc().toIso8601String(),
         'updated_at': (updatedAt ?? createdAt).toUtc().toIso8601String(),
+        'second_opinion': secondOpinion,
       };
 }

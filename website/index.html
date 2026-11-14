@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlasticLens: know your plastic, recycle it right</title>
+  <meta name="description" content="PlasticLens is a free Android app that identifies the likely plastic type of an item from a photo, offline, and explains how to recycle it.">
+  <meta name="theme-color" content="#06425C">
+  <meta property="og:title" content="PlasticLens: know your plastic">
+  <meta property="og:description" content="Snap a photo, see the likely plastic type and how to recycle it. Works offline.">
+  <meta property="og:image" content="assets/og.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="hero" id="top">
+    <nav class="nav wrap" aria-label="Main">
+      <a class="brand" href="#top" aria-label="PlasticLens home">
+        <img src="assets/icon.svg" alt="" width="36" height="36">
+        <span>PlasticLens</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Menu</span><span aria-hidden="true">☰</span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#plastics">Plastics</a></li>
+        <li><a href="#why">Why it matters</a></li>
+        <li><a class="btn btn-small" href="#download">Download</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-body wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Free Android app · works offline</p>
+        <h1>Know your plastic.<br>Recycle it right.</h1>
+        <p class="lead">Point your camera at a bottle, tub or bag. PlasticLens estimates the plastic type in under a second, right on your phone, and tells you how to dispose of it properly.</p>
+        <div class="cta">
+          <a class="btn" href="#download">Download the APK</a>
+          <a class="btn btn-ghost" href="#how">See how it works</a>
+        </div>
+      </div>
+      <div class="hero-phone">
+        <div class="phone">
+          <img src="assets/screenshot-result.webp" width="360" height="800"
+               alt="PlasticLens result screen showing a water bottle identified as PET, plastic type 1, with confidence and recycling guidance">
+        </div>
+      </div>
+    </div>
+    <svg class="waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 60c120 30 240 45 360 30s240-60 360-60 240 45 360 60 240-15 360-30v120H0z" fill="rgba(255,255,255,.12)"/>
+      <path d="M0 80c160 20 320 30 480 15s320-55 480-50 320 50 480 50v25H0z" fill="#f6faf8"/>
+    </svg>
+  </header>
+
+  <main id="main">
+    <section class="section wrap" id="how" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="steps">
+        <li class="card">
+          <span class="step-icon" aria-hidden="true">📷</span>
+          <h3>Snap</h3>
+          <p>Take a photo of one item, or pick one from your gallery. Good light and a plain background help.</p>
+        </li>
+        <li class="card">
+          <span class="step-icon" aria-hidden="true">🔍</span>
+          <h3>Identify</h3>
+          <p>A neural network on your phone estimates the plastic type and how confident it is, and tells you when it isn't sure.</p>
+        </li>
+        <li class="card">
+          <span class="step-icon" aria-hidden="true">♻️</span>
+          <h3>Recycle</h3>
+          <p>See what the material is, where it's used and how to dispose of it. Then save it to your collection.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section alt" id="features" aria-labelledby="features-title">
+      <div class="wrap">
+        <h2 id="features-title">Features</h2>
+        <div class="grid features">
+          <article class="card"><h3>Offline AI</h3><p>The model runs entirely on the device. No upload is needed to identify an item, and it works in airplane mode.</p></article>
+          <article class="card"><h3>Honest results</h3><p>Every result shows a calibrated confidence. Unclear photos say “Unable to identify reliably” instead of guessing.</p></article>
+          <article class="card"><h3>Material guide</h3><p>Properties, everyday uses, recycling tips and an eco tip for each of the six common plastics.</p></article>
+          <article class="card"><h3>Verify with the code</h3><p>Correct a result using the ♲ number on the item. Your corrections help improve the model.</p></article>
+          <article class="card"><h3>Collection &amp; badges</h3><p>Find all six polymer types, keep a streak going and unlock badges. Points only come from reliable scans.</p></article>
+          <article class="card"><h3>Your data, your choice</h3><p>Use it without an account, or sign in to sync. Photos are backed up only if you turn that on.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="plastics" aria-labelledby="plastics-title">
+      <h2 id="plastics-title">Plastics it recognises</h2>
+      <p class="section-lead">The resin identification code tells you what an item is made of. It does not tell you whether your local scheme accepts it.</p>
+      <ul class="grid plastics">
+        <li class="plastic" style="--c:#0B6E99"><span class="code" aria-hidden="true">1</span><h3>PET</h3><p>Polyethylene terephthalate</p><small>Drinks bottles, food jars, clear punnets</small></li>
+        <li class="plastic" style="--c:#00796B"><span class="code" aria-hidden="true">2</span><h3>HDPE</h3><p>High-density polyethylene</p><small>Milk jugs, detergent and shampoo bottles</small></li>
+        <li class="plastic" style="--c:#A23B38"><span class="code" aria-hidden="true">3</span><h3>PVC</h3><p>Polyvinyl chloride</p><small>Pipes, window frames, blister packs</small></li>
+        <li class="plastic" style="--c:#6A4BAE"><span class="code" aria-hidden="true">4</span><h3>LDPE</h3><p>Low-density polyethylene</p><small>Carrier bags, films, squeeze bottles</small></li>
+        <li class="plastic" style="--c:#8A5600"><span class="code" aria-hidden="true">5</span><h3>PP</h3><p>Polypropylene</p><small>Yoghurt tubs, takeaway boxes, caps</small></li>
+        <li class="plastic" style="--c:#5C5763"><span class="code" aria-hidden="true">6</span><h3>PS</h3><p>Polystyrene</p><small>Foam cups and trays, disposable cutlery</small></li>
+      </ul>
+    </section>
+
+    <section class="section alt" id="why" aria-labelledby="why-title">
+      <div class="wrap">
+        <h2 id="why-title">Why it matters</h2>
+        <div class="grid facts">
+          <figure class="fact"><p class="num">~400&nbsp;Mt</p><figcaption>of plastic waste is produced worldwide every year.<cite>UNEP, <a href="https://www.unep.org/interactives/beat-plastic-pollution/">Beat Plastic Pollution</a></cite></figcaption></figure>
+          <figure class="fact"><p class="num">9&nbsp;%</p><figcaption>of plastic waste is recycled. 22&nbsp;% is mismanaged: dumped, burned in the open or leaked.<cite>OECD, <a href="https://www.oecd.org/environment/plastics/">Global Plastics Outlook</a> (2022)</cite></figcaption></figure>
+          <figure class="fact"><p class="num">~11&nbsp;Mt</p><figcaption>of plastic enters the ocean each year.<cite>Pew Charitable Trusts &amp; SYSTEMIQ, <a href="https://www.pewtrusts.org/en/research-and-analysis/articles/2020/07/23/breaking-the-plastic-wave-top-findings">Breaking the Plastic Wave</a> (2020)</cite></figcaption></figure>
+        </div>
+        <p class="section-lead">Sorting correctly keeps recyclable material clean and valuable, and keeps the rest out of rivers and seas. Knowing what an item is made of is the first step.</p>
+      </div>
+    </section>
+
+    <section class="section wrap download" id="download" aria-labelledby="download-title">
+      <h2 id="download-title">Get PlasticLens</h2>
+      <p class="section-lead">Free, no ads. Android 7.0 or newer.</p>
+      <div class="cta center">
+        <a class="btn" href="https://github.com/Jaavanika/plastic-lens/releases/latest" rel="noopener">Download APK from GitHub</a>
+      </div>
+      <p class="small">Installing an APK may need “Install unknown apps” turned on for your browser. Not yet available on Google Play.</p>
+      <p class="small note">PlasticLens gives a visual estimate, not a laboratory analysis. Always check the resin code on the item and your local recycling rules.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="28" height="28"><span>PlasticLens</span></a>
+        <p class="small">An independent capstone project. Not affiliated with any other plastic-scanner app.</p>
+      </div>
+      <ul class="footer-links">
+        <li><a href="privacy.html">Privacy policy</a></li>
+        <li><a href="https://github.com/Jaavanika/plastic-lens">Source code</a></li>
+        <li><a href="https://github.com/Jaavanika/plastic-lens/issues">Contact &amp; feedback</a></li>
+      </ul>
+      <p class="small credits">Model trained on <a href="https://doi.org/10.17632/tvfx5dspf3.1">PlasticWaste-DB</a> (CC BY 4.0) and <a href="https://github.com/garythung/trashnet">TrashNet</a> (MIT). © <span id="year">2026</span> PlasticLens.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+</body>
+</html>

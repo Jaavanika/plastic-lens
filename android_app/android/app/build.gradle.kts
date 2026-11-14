@@ -36,6 +36,25 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // The `onnxruntime` Flutter plugin only bundles ARM builds of
+    // libonnxruntime.so; the official AAR (same version, 1.15.1) adds x86_64
+    // for emulators. Both provide the ARM copies, so keep the first.
+    packaging {
+        jniLibs {
+            pickFirsts += "**/libonnxruntime.so"
+        }
+    }
+}
+
+dependencies {
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.15.1")
+}
+
+// Firebase is optional: without google-services.json (not committed) the
+// app builds and runs local-only.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 kotlin {

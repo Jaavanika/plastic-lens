@@ -1,10 +1,13 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
+import '../services/learning_service.dart';
 import '../services/material_repository.dart';
+import '../services/progress_service.dart';
 import '../services/scan_store.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import 'learn_screen.dart';
 import 'scan_flow.dart';
 import 'result_screen.dart';
 
@@ -70,6 +73,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const _LearnPrompt(),
             const SectionTitle('Did you know?'),
             Card(
               child: Padding(
@@ -82,6 +86,34 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Daily learning prompt: the next unfinished lesson, or the quiz.
+class _LearnPrompt extends StatelessWidget {
+  const _LearnPrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    final learning = context.watch<LearningService>();
+    final next = learning.lessons.where((l) => !learning.isDone(l.id)).firstOrNull;
+    final quizDone = learning.isDone(ProgressCalculator.quizLessonId);
+    if (next == null && quizDone) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: ListTile(
+          leading: const Icon(Icons.school_outlined),
+          title: Text(next == null ? 'Take the recycling quiz' : 'Today’s lesson: ${next.title}'),
+          subtitle: Text(next == null ? 'Earn the Quiz whiz badge' : '${next.minutes} min · +15 points'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => next == null ? const QuizScreen() : LessonScreen(lesson: next),
+          )),
         ),
       ),
     );

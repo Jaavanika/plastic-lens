@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy policy | PlasticLens</title>
+  <meta name="description" content="How PlasticLens handles your photos and data.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .policy { max-width: 760px; padding: 48px 0 72px; }
+    .policy h2 { font-size: 1.4rem; margin-top: 1.6em; }
+    .policy li { margin-bottom: .5em; }
+    .top { background: var(--deep); padding: 16px 0; }
+    .top .brand { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="top"><div class="wrap"><a class="brand" href="index.html"><img src="assets/icon.svg" alt="" width="32" height="32"><span>PlasticLens</span></a></div></div>
+  <main class="wrap policy">
+    <h1>Privacy policy</h1>
+    <p class="small">Last updated: 14 November 2026</p>
+
+    <h2>Photos</h2>
+    <ul>
+      <li>Plastic identification runs on your phone. Your photo is not uploaded in order to identify it.</li>
+      <li>Photos you scan are stored in the app's private storage on your phone.</li>
+      <li>If you are signed in and turn on <strong>Back up photos</strong> (off by default), photos are uploaded to your private Firebase Storage folder. Only your account can read them.</li>
+      <li>If the optional online second opinion is enabled and you are signed in, the photo is sent over HTTPS to the PlasticLens server, which forwards it to an AI vision service (Anthropic) to name the object. The PlasticLens server does not store the photo.</li>
+    </ul>
+
+    <h2>Account and scan data</h2>
+    <ul>
+      <li>You can use PlasticLens without an account. Everything then stays on your phone.</li>
+      <li>If you sign in (email or Google, via Firebase Authentication), your scan results, collection and progress are synced to Google Cloud Firestore. Security rules ensure only you can read them.</li>
+      <li>Passwords are handled by Firebase Authentication and are never stored by PlasticLens.</li>
+    </ul>
+
+    <h2>Corrections</h2>
+    <p>When you correct a material, the predicted and corrected labels, the confidence and the model version are stored to improve future models. The photo is not included.</p>
+
+    <h2>Deleting your data</h2>
+    <ul>
+      <li><strong>Profile → Delete data on this phone</strong> removes local scans, photos and settings.</li>
+      <li><strong>Profile → Delete my account</strong> permanently removes your account, synced scans, backed-up photos and progress.</li>
+    </ul>
+
+    <h2>No ads, no tracking</h2>
+    <p>PlasticLens has no advertising and no third-party analytics.</p>
+
+    <h2>Contact</h2>
+    <p>Questions: open an issue on <a href="https://github.com/Jaavanika/plastic-lens/issues">GitHub</a>.</p>
+
+    <p><a href="index.html">← Back to PlasticLens</a></p>
+  </main>
+</body>
+</html>

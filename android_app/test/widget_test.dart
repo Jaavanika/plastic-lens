@@ -1,30 +1,21 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:plastic_lens/app.dart';
 import 'package:plastic_lens/models/classification.dart';
 import 'package:plastic_lens/screens/result_screen.dart';
-import 'package:plastic_lens/services/classifier_service.dart';
-import 'package:plastic_lens/services/material_repository.dart';
-import 'package:plastic_lens/services/scan_store.dart';
-import 'package:plastic_lens/utils/dummy_data.dart';
-import 'package:provider/provider.dart';
 
-// Synchronous read: async file I/O never completes inside testWidgets' fake zone.
-Future<MaterialRepository> loadMaterials() async =>
-    MaterialRepository.fromJsonString(File('assets/data/plastic_types.json').readAsStringSync());
-
-Future<ScanStore> seededStore() async {
-  final store = ScanStore(InMemoryScanStorage(dummyScans()));
-  await store.load();
-  return store;
-}
+import 'helpers.dart';
 
 void main() {
+  void phoneScreen(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 2.625;
+    addTearDown(tester.view.reset);
+  }
+
   testWidgets('all five tabs are reachable', (tester) async {
-    final app = PlasticLensApp(materials: await loadMaterials(), store: await seededStore(), classifier: FakeClassifier());
-    await tester.pumpWidget(app);
+    phoneScreen(tester);
+    await tester.pumpWidget(PlasticLensApp(services: await buildServices()));
     await tester.pumpAndSettle();
 
     expect(find.text('PlasticLens'), findsWidgets);
@@ -34,6 +25,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('My collection'), findsOneWidget);
     expect(find.textContaining('of 6 polymer types found'), findsOneWidget);
+    expect(find.text('points'), findsOneWidget);
 
     await tester.tap(find.text('History'));
     await tester.pumpAndSettle();
@@ -43,11 +35,22 @@ void main() {
     await tester.tap(find.text('Profile'));
     await tester.pumpAndSettle();
     expect(find.text('Guest'), findsOneWidget);
+    expect(find.text('Cloud backup is not set up in this build'), findsOneWidget);
+  });
+
+  testWidgets('first launch with accounts offers sign-in or guest mode', (tester) async {
+    phoneScreen(tester);
+    await tester.pumpWidget(PlasticLensApp(services: await buildServices(auth: FakeAuth())));
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome to PlasticLens'), findsOneWidget);
+    await tester.tap(find.textContaining('Continue without an account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Scan plastic'), findsWidgets);
   });
 
   testWidgets('history search and filter narrow the list', (tester) async {
-    final app = PlasticLensApp(materials: await loadMaterials(), store: await seededStore(), classifier: FakeClassifier());
-    await tester.pumpWidget(app);
+    phoneScreen(tester);
+    await tester.pumpWidget(PlasticLensApp(services: await buildServices()));
     await tester.tap(find.text('History'));
     await tester.pumpAndSettle();
 
@@ -64,19 +67,12 @@ void main() {
   });
 
   Future<void> pumpResult(WidgetTester tester, String id) async {
-    // Phone-sized screen (Pixel 7) so the details card is laid out.
-    tester.view.physicalSize = const Size(1080, 2400);
-    tester.view.devicePixelRatio = 2.625;
-    addTearDown(tester.view.reset);
-    final materials = await loadMaterials();
-    final store = await seededStore();
-    await tester.pumpWidget(MultiProvider(
-      providers: [
-        Provider.value(value: materials),
-        ChangeNotifierProvider.value(value: store),
-      ],
-      child: MaterialApp(home: ResultScreen(scanId: id)),
-    ));
+    phoneScreen(tester);
+    final services = await buildServices();
+    await tester.pumpWidget(PlasticLensApp(services: services));
+    await tester.pumpAndSettle();
+    Navigator.of(tester.element(find.byType(Scaffold).first))
+        .push(MaterialPageRoute<void>(builder: (_) => ResultScreen(scanId: id)));
     await tester.pumpAndSettle();
   }
 
@@ -92,14 +88,40 @@ void main() {
     expect(find.text('PET: Polyethylene Terephthalate'), findsOneWidget);
   });
 
-  testWidgets('low-confidence and non-plastic results are shown safely', (tester) async {
+  testWidgets('low-confidence result is shown safely', (tester) async {
     await pumpResult(tester, 'demo-5');
     expect(find.text('Unable to identify reliably'), findsOneWidget);
     expect(find.text('Unsure'), findsWidgets);
+  });
 
+  testWidgets('non-plastic result is shown safely', (tester) async {
     await pumpResult(tester, 'demo-4');
     expect(find.text('No plastic detected'), findsOneWidget);
     expect(find.text('No'), findsOneWidget);
+  });
+
+  testWidgets('correcting the material marks the scan verified', (tester) async {
+    await pumpResult(tester, 'demo-5');
+    await tester.tap(find.text('Correct material'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Polypropylene'));
+    await tester.pumpAndSettle();
+    expect(find.text('Verified by you'), findsWidgets);
+  });
+
+  testWidgets('learning library and quiz can be completed', (tester) async {
+    phoneScreen(tester);
+    final services = await buildServices();
+    await tester.pumpWidget(PlasticLensApp(services: services));
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Learning library'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('What the ♲ numbers mean'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Mark as read'));
+    await tester.pumpAndSettle();
+    expect(services.learning.isDone('resin-codes'), isTrue);
   });
 
   test('threshold policy maps confidence to result states', () {

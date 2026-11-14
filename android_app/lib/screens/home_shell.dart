@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:provider/provider.dart';
 
+import '../services/progress_service.dart';
+import '../widgets/progress_widgets.dart';
 import 'collection_screen.dart';
 import 'history_screen.dart';
 import 'home_screen.dart';
@@ -16,8 +19,43 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
+  ProgressService? _progress;
 
   void _go(int i) => setState(() => _index = i);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final p = context.read<ProgressService>();
+    if (p != _progress) {
+      _progress?.removeListener(_celebrate);
+      _progress = p..addListener(_celebrate);
+    }
+  }
+
+  @override
+  void dispose() {
+    _progress?.removeListener(_celebrate);
+    super.dispose();
+  }
+
+  void _celebrate() {
+    final p = _progress!;
+    for (final id in p.newlyUnlocked) {
+      final a = p.achievements.firstWhere((a) => a.id == id);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(children: [
+          Icon(achievementIcon(a.icon), color: Colors.amber),
+          const SizedBox(width: 12),
+          Expanded(child: Text('Badge unlocked: ${a.title}')),
+        ]),
+        action: SnackBarAction(
+          label: 'View',
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AchievementsScreen())),
+        ),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +64,11 @@ class _HomeShellState extends State<HomeShell> {
     final page = switch (_index) {
       0 => HomeScreen(onOpenScanner: () => _go(1), onOpenHistory: () => _go(3), onOpenCollection: () => _go(2)),
       1 => const ScannerScreen(),
-      2 => const CollectionScreen(),
+      2 => CollectionScreen(
+          header: ProgressSummary(
+            onTapBadges: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AchievementsScreen())),
+          ),
+        ),
       3 => const HistoryScreen(),
       _ => const ProfileScreen(),
     };

@@ -50,6 +50,18 @@ class ResultScreen extends StatelessWidget {
             _StateBanner(scan: scan),
             const SizedBox(height: 12),
             _DetailsCard(scan: scan, material: material),
+            if (scan.secondOpinion != null && !scan.secondOpinion!.startsWith('A printed resin code'))
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  child: ListTile(
+                    leading: const Icon(Icons.travel_explore),
+                    title: const Text('Online second opinion'),
+                    subtitle: Text(scan.secondOpinion!),
+                  ),
+                ),
+              ),
             if (probabilities != null && scan.state == ResultState.medium && !scan.userVerified)
               _Alternatives(probabilities: probabilities!),
             const SizedBox(height: 12),
@@ -160,9 +172,12 @@ class _StateBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fromPrintedCode = scan.secondOpinion != null && scan.secondOpinion!.startsWith('A printed resin code') && scan.plasticType != null;
     final (IconData icon, String title, String body) = scan.userVerified
         ? (Icons.verified_outlined, 'Verified by you', 'You confirmed the material of this item.')
-        : switch (scan.state) {
+        : fromPrintedCode
+            ? (Icons.recycling, '♲${scan.resinCode} printed on the item: ${scan.plasticType}', scan.secondOpinion!)
+            : switch (scan.state) {
             ResultState.high => (
                 Icons.check_circle_outline,
                 'Likely ${scan.plasticType}',
@@ -184,7 +199,7 @@ class _StateBanner extends StatelessWidget {
                 'This looks like glass, paper, cardboard or metal. If it is plastic, correct it below.'
               ),
           };
-    final color = stateColor(scan.state, verified: scan.userVerified);
+    final color = stateColor(scan.state, verified: scan.userVerified || fromPrintedCode);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -258,7 +273,8 @@ class _DetailsCard extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               'Confidence is the model’s own estimate from the photo, not a laboratory measurement. '
-              'Scanned ${DateFormat.yMMMd().add_jm().format(scan.createdAt)} · model ${scan.modelVersion}',
+              'Scanned ${DateFormat.yMMMd().add_jm().format(scan.createdAt)} · model ${scan.modelVersion}'
+              '${scan.llmUsed ? ' · object named by online check' : ''}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),

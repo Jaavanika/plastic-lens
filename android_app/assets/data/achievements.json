@@ -1,0 +1,20 @@
+{
+  "points": {
+    "reliable_scan": 10,
+    "verification": 5,
+    "lesson": 15,
+    "quiz_pass": 20
+  },
+  "achievements": [
+    {"id": "first_scan", "title": "First look", "description": "Complete your first reliable scan.", "icon": "photo_camera", "metric": "reliable_scans", "target": 1},
+    {"id": "scans_10", "title": "Sharp eye", "description": "Complete 10 reliable scans.", "icon": "visibility", "metric": "reliable_scans", "target": 10},
+    {"id": "all_polymers", "title": "Full set", "description": "Find all 6 polymer types.", "icon": "workspace_premium", "metric": "polymers_found", "target": 6},
+    {"id": "three_polymers", "title": "Variety pack", "description": "Find 3 different polymer types.", "icon": "category", "metric": "polymers_found", "target": 3},
+    {"id": "verifier", "title": "Fact checker", "description": "Verify or correct 3 scans using the resin code.", "icon": "fact_check", "metric": "verified_scans", "target": 3},
+    {"id": "collector", "title": "Collector", "description": "Save 10 items to your collection.", "icon": "collections_bookmark", "metric": "collection_size", "target": 10},
+    {"id": "learner", "title": "Curious mind", "description": "Finish 3 lessons.", "icon": "school", "metric": "lessons_done", "target": 3},
+    {"id": "quiz_pass", "title": "Quiz whiz", "description": "Pass the recycling quiz.", "icon": "quiz", "metric": "quiz_passed", "target": 1},
+    {"id": "streak_3", "title": "On a roll", "description": "Scan or learn 3 days in a row.", "icon": "local_fire_department", "metric": "best_streak", "target": 3},
+    {"id": "streak_7", "title": "Week warrior", "description": "Scan or learn 7 days in a row.", "icon": "whatshot", "metric": "best_streak", "target": 7}
+  ]
+}

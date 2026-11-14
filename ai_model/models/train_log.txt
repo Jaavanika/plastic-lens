@@ -1,0 +1,28 @@
+﻿train counts: {'PET': 396, 'HDPE': 242, 'PVC': 173, 'LDPE': 339, 'PP': 236, 'PS': 403, 'non_plastic': 308}
+class weights: {'PET': 0.76, 'HDPE': 1.24, 'PVC': 1.73, 'LDPE': 0.88, 'PP': 1.27, 'PS': 0.74, 'non_plastic': 0.97}
+python.exe : Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher 
+rate limits and faster downloads.
+At line:1 char:386
++ ... ARNING="1"; & C:\src\venvs\plasticlens\Scripts\python.exe -u train.py ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Warning: You ar...ster downloads.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[head] epoch  1 loss 1.853 | val acc 0.740 f1 0.743 loss 1.582 | 46.5s  *
+[head] epoch  2 loss 0.675 | val acc 0.823 f1 0.824 loss 0.846 | 41.0s  *
+[head] epoch  3 loss 0.366 | val acc 0.826 f1 0.820 loss 0.753 | 44.2s
+[head] epoch  4 loss 0.231 | val acc 0.817 f1 0.816 loss 0.700 | 41.3s
+[finetune] epoch  5 loss 0.219 | val acc 0.828 f1 0.827 loss 0.675 | 94.0s  *
+[finetune] epoch  6 loss 0.162 | val acc 0.846 f1 0.839 loss 0.609 | 95.6s  *
+[finetune] epoch  7 loss 0.159 | val acc 0.848 f1 0.841 loss 0.627 | 95.8s  *
+[finetune] epoch  8 loss 0.125 | val acc 0.857 f1 0.855 loss 0.639 | 98.5s  *
+[finetune] epoch  9 loss 0.157 | val acc 0.846 f1 0.844 loss 0.670 | 99.0s
+[finetune] epoch 10 loss 0.170 | val acc 0.868 f1 0.862 loss 0.700 | 96.2s  *
+[finetune] epoch 11 loss 0.120 | val acc 0.852 f1 0.848 loss 0.676 | 116.1s
+[finetune] epoch 12 loss 0.098 | val acc 0.864 f1 0.860 loss 0.640 | 99.3s
+[finetune] epoch 13 loss 0.091 | val acc 0.872 f1 0.866 loss 0.677 | 99.2s  *
+[finetune] epoch 14 loss 0.040 | val acc 0.875 f1 0.871 loss 0.653 | 99.4s  *
+[finetune] epoch 15 loss 0.042 | val acc 0.868 f1 0.864 loss 0.719 | 122.7s
+[finetune] epoch 16 loss 0.041 | val acc 0.872 f1 0.873 loss 0.655 | 93.5s  *
+[finetune] epoch 17 loss 0.037 | val acc 0.886 f1 0.883 loss 0.639 | 99.7s  *
+[finetune] epoch 18 loss 0.033 | val acc 0.866 f1 0.861 loss 0.583 | 84.9s

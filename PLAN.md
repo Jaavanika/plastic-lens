@@ -31,14 +31,14 @@ Because this is a solo project, sections are tagged by priority:
 |  0 | Project setup                           |    1 | --         | Core     | Done        |
 |  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Done        |
 |  2 | Dataset preparation                     |    2 | 0          | Core     | Done        |
-|  3 | Model training and evaluation           |    3 | 2          | Core     | Not started |
-|  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | Not started |
-|  5 | Material database and result screen     |    4 | 4          | Core     | Not started |
-|  6 | Firebase auth and cloud data            |    5 | 1          | Core     | Not started |
-|  7 | FastAPI backend and LLM enrichment      |    5 | 4, 6       | Stretch  | Not started |
-|  8 | History, collection, sync               |    6 | 5, 6       | Core     | Not started |
-|  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Not started |
-| 10 | Landing website                         |    7 | 5          | Core     | Not started |
+|  3 | Model training and evaluation           |    3 | 2          | Core     | In progress |
+|  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | In progress |
+|  5 | Material database and result screen     |    4 | 4          | Core     | In progress |
+|  6 | Firebase auth and cloud data            |    5 | 1          | Core     | Code done; needs your Firebase setup |
+|  7 | FastAPI backend and LLM enrichment      |    5 | 4, 6       | Stretch  | Code done; needs deploy |
+|  8 | History, collection, sync               |    6 | 5, 6       | Core     | Done (verify on phone) |
+|  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
+| 10 | Landing website                         |    7 | 5          | Core     | In progress |
 | 11 | Testing, hardening, release, report     |    8 | all        | Core     | Not started |
 
 Sections 1 and 2 can run in parallel: while the model trains on Colab,
@@ -58,7 +58,7 @@ Tasks:
 
 Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/lock problems).
 
-- [x] Create the folder structure from README Â§16.
+- [x] Create the folder structure from README §16.
 - [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
 - [x] Create a GitHub repository and push (https://github.com/Jaavanika/plastic-lens).
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
@@ -66,7 +66,7 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 - [x] `flutter doctor --android-licenses` (all accepted; Android toolchain passes).
 - [x] Emulator `PlasticLens_Pixel` (Pixel 7, Android 36).
 - [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
-- [x] `flutter create` â†’ `android_app/` (package `com.plasticlens.plastic_lens`).
+- [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
 - [x] Create a Firebase project `plasticlens` (project ID `plasticlens-61083`, Spark plan).
 - [x] App name and palette: **PlasticLens**, green + ocean blue. Logo: TBD in Section 1.
 
@@ -121,7 +121,7 @@ Tasks:
 - [x] Crop objects using bounding boxes if available (`preprocessing/prepare.py`).
 - [x] Remove duplicates (perceptual hash).
 - [x] Add a `non_plastic` class from TrashNet glass/paper/cardboard/metal (440 images).
-- [ ] *(Optional)* Photograph 20â€“50 own items per class, labelled from the printed resin code.
+- [ ] *(Optional)* Photograph 20–50 own items per class, labelled from the printed resin code.
 - [x] Write `preprocessing/split.py`: grouped 70/15/15 split; save as `train/ val/ test/` folders or a CSV manifest.
 - [x] Record dataset statistics in `documentation/model_card.md`.
 
@@ -140,21 +140,21 @@ Done when:
 
 Tasks:
 
-- [ ] `training/dataset.py`: PyTorch `Dataset` + transforms (224Ã—224, ImageNet normalisation, augmentation for train only).
-- [ ] `training/train.py`: load `timm` `mobilenetv3_large_100`, `num_classes=7`, weighted loss for imbalance.
-- [ ] Stage 1: train head only (frozen backbone). Stage 2: unfreeze and fine-tune with low LR.
-- [ ] Early stopping on validation F1; save best checkpoint.
-- [ ] Train on Google Colab (Runtime â†’ T4 GPU). Keep the dataset zip and checkpoints on Google Drive so a Colab disconnect loses nothing.
-- [ ] `evaluation/evaluate.py`: accuracy, per-class precision/recall/F1, confusion matrix image.
-- [ ] Temperature scaling on validation set; report calibration (ECE).
-- [ ] Pick High / Medium / Low confidence thresholds from validation data.
-- [ ] *(Optional)* Compare with EfficientNet-B0.
+- [x] `training/dataset.py`: PyTorch `Dataset` + transforms (224×224, ImageNet normalisation, augmentation for train only).
+- [x] `training/train.py`: load `timm` `mobilenetv3_large_100`, `num_classes=7`, weighted loss for imbalance.
+- [x] Stage 1: train head only (frozen backbone). Stage 2: unfreeze and fine-tune with low LR.
+- [x] Early stopping on validation F1; save best checkpoint.
+- [x] ~~Train on Google Colab~~ Trained locally on the 12-core CPU instead (~95 s/epoch, no Google login needed). `training/colab_train.ipynb` is ready for GPU retraining.
+- [x] `evaluation/evaluate.py`: accuracy, per-class precision/recall/F1, confusion matrix image.
+- [x] Temperature scaling on validation set; report calibration (ECE). *(script written; runs after training)*
+- [x] Pick High / Medium / Low confidence thresholds from validation data. *(script written; runs after training)*
+- [ ] *(Optional)* Compare with EfficientNet-B0 (cell ready in the Colab notebook).
 
 Deliverables: `models/mobilenetv3_v1.pt`, `labels.json`, metrics report + confusion matrix in `model_card.md`.
 
 Done when:
 
-- [ ] Test-set metrics are recorded (test set used only once).
+- [ ] Test-set metrics are recorded (test set used only once). *(training in progress: best val macro-F1 0.883 at epoch 17)*
 - [ ] Thresholds and temperature value are written down.
 
 ---
@@ -165,20 +165,20 @@ Done when:
 
 Tasks:
 
-- [ ] `export/to_onnx.py`: export with fixed input `1Ã—3Ã—224Ã—224`; apply temperature inside the graph or in app code.
-- [ ] `export/verify_onnx.py`: compare PyTorch vs ONNX outputs on 100 test images (max diff < 1e-4, same top-1).
-- [ ] Copy `plasticlens.onnx` + `labels.json` to `android_app/assets/models/`.
-- [ ] Flutter `ClassifierService`: load model once, preprocess (EXIF rotate, resize, normalise â€” identical to Python), run, softmax, return top-k.
-- [ ] Apply threshold policy â†’ `High / Medium / Low / NonPlastic` result state.
-- [ ] Run inference off the UI thread (isolate); show progress indicator.
-- [ ] Measure latency on a physical phone.
-- [ ] Fallback if the ONNX plugin fails: convert to TFLite and use `tflite_flutter`.
+- [x] `export/to_onnx.py`: fixed input `1×3×224×224`; temperature + softmax inside the graph; ONNX IR 8 for the app's ORT 1.15.
+- [x] `export/verify_onnx.py`: compare PyTorch vs ONNX on 100 test images (max diff < 1e-4, same top-1); also writes Dart parity fixtures. *(runs after training)*
+- [ ] Copy `plasticlens.onnx` + `labels.json` to `android_app/assets/models/` (done by `to_onnx.py`).
+- [x] Flutter `OnnxClassifier`: load model once, preprocess (EXIF rotate, resize, normalise, same as Python), run, return probabilities.
+- [x] Apply threshold policy → `High / Medium / Low / NonPlastic` result state (unit-tested).
+- [x] Run preprocessing in an isolate and inference via `runAsync`; progress indicator on the preview screen.
+- [ ] Measure latency on a physical phone (shown in Profile → About after a scan). **Needs your phone.**
+- [x] ~~Fallback to TFLite~~ Not needed: the plugin ships ARM-only libraries, so the official `onnxruntime-android:1.15.1` AAR is added for x86_64 emulators.
 
 Deliverables: app that classifies a real photo offline.
 
 Done when:
 
-- [ ] Same image gives the same top-1 class in Python and in the app.
+- [ ] Same image gives the same top-1 class in Python and in the app (`test/preprocess_parity_test.dart` + emulator check).
 - [ ] Works in airplane mode.
 
 ---
@@ -189,18 +189,18 @@ Done when:
 
 Tasks:
 
-- [ ] Write `assets/data/plastic_types.json` for all 6 polymers (full name, resin code, properties, common items, recycling guidance, fact, eco tip) â€” original wording, with sources noted.
-- [ ] `MaterialRepository` that reads the bundled JSON (later also Firestore).
-- [ ] Connect result screen to classifier output + material record.
-- [ ] Uncertain state UI ("Unable to identify reliably â€” try another photo") and non-plastic state.
-- [ ] Editable Object name field and "Correct the material" action.
-- [ ] Material Details screen with full information.
+- [x] Write `assets/data/plastic_types.json` for all 6 polymers (full name, resin code, properties, common items, recycling guidance, fact, eco tip), in original wording, with sources noted.
+- [x] `MaterialRepository` that reads the bundled JSON and merges newer Firestore records.
+- [x] Connect result screen to classifier output + material record.
+- [x] Uncertain state UI ("Unable to identify reliably" + "Try another photo") and non-plastic state.
+- [x] Editable Object name field and "Correct the material" action (also sends feedback).
+- [x] Material Details screen with full information.
 
-Deliverables: end-to-end offline scan â†’ full result.
+Deliverables: end-to-end offline scan → full result.
 
 Done when:
 
-- [ ] Every class shows complete info; low-confidence and non-plastic states display correctly.
+- [ ] Every class shows complete info; low-confidence and non-plastic states display correctly. *(widget-tested with dummy data; final check with the real model)*
 
 ---
 
@@ -210,18 +210,19 @@ Done when:
 
 Tasks:
 
-- [ ] Add `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`.
-- [ ] Email/password and Google sign-in; sign-out; auth-gated navigation.
-- [ ] Create `users` document on first sign-in.
-- [ ] Upload `plastic_types` to Firestore (script).
-- [ ] Write Firestore security rules (README Â§10); test with the Firebase emulator.
-- [ ] Account deletion (delete user data + images).
+- [x] Add `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`. Firebase is optional: without `google-services.json` the app runs local-only.
+- [x] Email/password and Google sign-in; sign-out; first-launch sign-in screen with "continue without an account".
+- [x] Create `users` document on first sign-in.
+- [x] Upload `plastic_types` to Firestore (`backend/scripts/seed_firestore.py`). **Run it with your service-account key.**
+- [x] Write Firestore + Storage security rules (README §10); tested with the Firebase emulator (`firebase/`, `npm run test:rules`, 9 tests pass).
+- [x] Account deletion (deletes scans, progress, profile, Storage images, then the auth user).
+- [ ] Connect the real project: add `android/app/google-services.json`, enable Email/Password + Google providers, create Firestore + Storage, deploy rules. **Needs your Firebase login.**
 
 Deliverables: login flow + deployed security rules.
 
 Done when:
 
-- [ ] A user cannot read another user's data (verified with emulator test).
+- [x] A user cannot read another user's data (verified with emulator test).
 
 ---
 
@@ -231,22 +232,22 @@ Done when:
 
 Tasks:
 
-- [ ] FastAPI app with `/api/health`.
-- [ ] Firebase ID-token verification dependency (`firebase-admin`).
-- [ ] `/api/identify/enrich`: accept image, call a vision LLM with a strict JSON prompt, validate with Pydantic, return result.
-- [ ] Keep the LLM API key in server environment variables only.
-- [ ] Per-user rate limit; image size limit; do not store images on the server.
-- [ ] `/api/feedback` and admin endpoints.
-- [ ] Pytest tests (mock the LLM call).
-- [ ] Deploy (Render / Railway / Google Cloud Run).
-- [ ] Flutter: if online, call enrich in parallel with local result; merge (printed resin code > classifier; show both if they disagree).
+- [x] FastAPI app with `/api/health`.
+- [x] Firebase ID-token verification dependency (`firebase-admin`).
+- [x] `/api/identify/enrich`: accept image, call a vision LLM (Claude, `claude-opus-5-5`, structured JSON output) and validate strictly with Pydantic.
+- [x] Keep the LLM API key in server environment variables only.
+- [x] Per-user rate limit (30/hour), 5 MB image limit with byte-level type check, images never stored.
+- [x] `/api/feedback` and admin endpoints (`/api/plastics`, `/api/admin/plastics/{code}`, `/api/admin/feedback`).
+- [x] Pytest tests with the LLM mocked (21 pass).
+- [ ] Deploy (Dockerfile ready for Cloud Run / Render). **Needs your cloud account + Anthropic API key.**
+- [x] Flutter: if online and signed in, call enrich in parallel with the local result; merge (printed resin code beats the classifier, and both are shown).
 
 Deliverables: deployed API + app showing object names when online.
 
 Done when:
 
-- [ ] App works identically offline (without enrichment) and online (with enrichment).
-- [ ] Invalid LLM output never crashes the app.
+- [ ] App works identically offline (without enrichment) and online (with enrichment). *(offline path verified; online needs the deployed API)*
+- [x] Invalid LLM output never crashes the app (server: strict validation tests; app: `test/enrich_test.dart`).
 
 ---
 
@@ -256,17 +257,17 @@ Done when:
 
 Tasks:
 
-- [ ] Local storage (`sqflite` or `hive`) for scans with `sync_status`.
-- [ ] Save scan from result screen (stable UUID scan IDs).
-- [ ] Background sync to Firestore when online; images optional to Storage.
-- [ ] History screen: list, search, filter by material, delete.
-- [ ] Collection screen: saved items grouped by material, progress (e.g. 4/6 polymers found).
+- [x] Local storage (`sqflite`) for scans with `sync_status`.
+- [x] Save scan from result screen (stable UUID scan IDs). Every scan goes to History; "Save" adds it to the collection.
+- [x] Background sync to Firestore when online; optional photo backup to Storage (off by default); offline deletes kept as tombstones.
+- [x] History screen: list, search, filter by material, swipe to delete.
+- [x] Collection screen: saved items grouped by material, progress (x/6 polymers found).
 
 Deliverables: persistent history + collection.
 
 Done when:
 
-- [ ] Scans made offline appear in Firestore after reconnecting, with no duplicates.
+- [x] Scans made offline appear in Firestore after reconnecting, with no duplicates (`test/sync_test.dart` against a fake Firestore; re-check on a phone once Firebase is connected).
 
 ---
 
@@ -276,17 +277,17 @@ Done when:
 
 Tasks:
 
-- [ ] Achievement definitions in Firestore (first scan, all 6 polymers, 7-day streak, â€¦).
-- [ ] Points rules (no points for unreliable predictions; points for verification and lessons).
-- [ ] Streak calculation (daily).
-- [ ] Learning library: short articles per polymer + recycling basics; simple quiz.
-- [ ] Notifications (FCM) for streak reminders â€” optional.
+- [x] Achievement definitions (10 badges) in `assets/data/achievements.json`; uploaded to Firestore `achievements` by the seed script.
+- [x] Points rules: reliable scan 10, verification 5, lesson 15, quiz 20; nothing for unreliable predictions.
+- [x] Streak calculation (daily, scans or lessons; current + best).
+- [x] Learning library: 4 recycling-basics lessons + one page per polymer + 8-question quiz.
+- [ ] Notifications (FCM) for streak reminders (optional, skipped).
 
 Deliverables: Profile shows points, badges, streak; learning section works.
 
 Done when:
 
-- [ ] Achievements unlock correctly in a scripted test scenario.
+- [x] Achievements unlock correctly in a scripted test scenario (`test/progress_test.dart`).
 
 ---
 
@@ -296,19 +297,19 @@ Done when:
 
 Tasks:
 
-- [ ] Hero: ocean background (licensed image), phone mock-up with a real PlasticLens screenshot, headline, tagline, download buttons.
-- [ ] How it works (Snap â†’ Identify â†’ Recycle).
-- [ ] Features and supported plastics (6 resin-code cards).
-- [ ] Why it matters (facts with sources).
-- [ ] Download section (APK link / Play Store when published), footer with privacy policy.
-- [ ] Responsive (phone, tablet, desktop), accessible, fast.
-- [ ] Deploy to Firebase Hosting.
+- [ ] Hero: ocean gradient + SVG waves (own artwork, no licensed photo needed), phone mock-up with a real PlasticLens screenshot *(screenshot after Section 4)*, headline, tagline, download button.
+- [x] How it works (Snap → Identify → Recycle).
+- [x] Features and supported plastics (6 resin-code cards).
+- [x] Why it matters (facts with sources: UNEP, OECD 2022, Pew/SYSTEMIQ 2020).
+- [x] Download section (GitHub Releases APK link), footer with privacy policy (`privacy.html`).
+- [ ] Responsive (phone, tablet, desktop), accessible, fast. *(built mobile-first; Lighthouse check pending)*
+- [ ] Deploy to Firebase Hosting (`firebase.json` ready). **Needs `firebase login`.**
 
 Deliverables: live URL.
 
 Done when:
 
-- [ ] Lighthouse â‰¥ 90 for performance and accessibility; no layout break at 360 px width.
+- [ ] Lighthouse ≥ 90 for performance and accessibility; no layout break at 360 px width.
 
 ---
 
@@ -318,16 +319,16 @@ Done when:
 
 Tasks:
 
-- [ ] Run image test scenarios (README Â§15.2) on the real app; record results.
-- [ ] Application tests (README Â§15.3); `flutter test` widget tests.
-- [ ] Test on at least 2 physical Android devices.
+- [ ] Run image test scenarios (README §15.2) on the real app; record results.
+- [ ] Application tests (README §15.3); `flutter test` widget tests. *(24 Flutter tests passing so far)*
+- [ ] Test on at least 2 physical Android devices. **Needs your phones.**
 - [ ] Security review: rules, token checks, no secrets in APK.
-- [ ] Build signed release APK.
-- [ ] Finish `model_card.md`, `architecture.md`, `api_documentation.md`.
-- [ ] Prepare capstone report and demo video.
+- [ ] Build signed release APK. *(keystore must be created by you and kept private)*
+- [ ] Finish `model_card.md`, `architecture.md`, `api_documentation.md`. *(architecture + API done; model card needs final metrics)*
+- [ ] Prepare capstone report and demo video. **Report draft by me; demo video needs you.**
 
 Deliverables: signed APK, documentation, report.
 
 Done when:
 
-- [ ] All boxes in README Â§21 "Project Completion Criteria" are ticked.
+- [ ] All boxes in README §21 "Project Completion Criteria" are ticked.

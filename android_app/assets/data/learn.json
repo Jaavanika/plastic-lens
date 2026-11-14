@@ -1,0 +1,57 @@
+{
+  "lessons": [
+    {
+      "id": "resin-codes",
+      "title": "What the ♲ numbers mean",
+      "minutes": 2,
+      "paragraphs": [
+        "The small triangle with a number from 1 to 7 is the Resin Identification Code. It tells you which plastic an item is made of: 1 PET, 2 HDPE, 3 PVC, 4 LDPE, 5 PP, 6 PS and 7 'other'.",
+        "The code describes the material. It does not promise that the item will be recycled. The arrows look like the recycling symbol, which confuses many people.",
+        "When PlasticLens is unsure, the printed code is the best way to check. It is usually moulded into the base of bottles and tubs."
+      ]
+    },
+    {
+      "id": "clean-dry-loose",
+      "title": "Clean, dry and loose",
+      "minutes": 2,
+      "paragraphs": [
+        "Food and liquid left in packaging can spoil a whole load of recycling. A quick rinse is usually enough; packaging does not need to be spotless.",
+        "Keep items loose rather than bagged unless your scheme asks for bags. Sorting machines cannot open bags, and plastic films tangle in the equipment.",
+        "Small items such as bottle tops and sachets often fall through screens at sorting centres. Check whether your scheme wants caps on the bottle or separate."
+      ]
+    },
+    {
+      "id": "reduce-reuse",
+      "title": "Reduce and reuse come first",
+      "minutes": 2,
+      "paragraphs": [
+        "Recycling saves material, but it still takes energy and transport. Plastic usually loses quality each time it is recycled.",
+        "Avoiding an item you do not need, or reusing one many times, saves more than recycling it once.",
+        "Easy swaps: a refillable bottle, a reusable shopping bag, a lunch box, and buying loose fruit and vegetables."
+      ]
+    },
+    {
+      "id": "microplastics",
+      "title": "Where plastic goes",
+      "minutes": 3,
+      "paragraphs": [
+        "Plastic that escapes waste collection can travel through drains and rivers into the sea. Sunlight and waves break it into smaller and smaller pieces.",
+        "Pieces smaller than 5 mm are called microplastics. They have been found in seawater, soil and food chains.",
+        "Burning plastic in the open releases harmful smoke, and PVC releases chlorine compounds. Putting plastic into proper collection keeps it out of the environment."
+      ]
+    }
+  ],
+  "quiz": {
+    "pass_mark": 6,
+    "questions": [
+      {"q": "What does the number inside the ♲ triangle tell you?", "options": ["The plastic type", "That it will definitely be recycled", "How many times it was recycled"], "answer": 0},
+      {"q": "Which resin code is PET, the plastic of most drinks bottles?", "options": ["1", "4", "6"], "answer": 0},
+      {"q": "Which plastic is used for flexible films and carrier bags?", "options": ["PS", "LDPE", "PVC"], "answer": 1},
+      {"q": "Why should plastic waste never be burned in the open?", "options": ["It smells bad but is harmless", "It releases harmful gases, especially PVC", "It makes the plastic recyclable"], "answer": 1},
+      {"q": "What should you do with a yoghurt pot before recycling it?", "options": ["Leave the yoghurt in", "Scrape it out and give a quick rinse", "Put it in a plastic bag first"], "answer": 1},
+      {"q": "Which plastic withstands heat and is used for microwave containers?", "options": ["PP", "PET", "LDPE"], "answer": 0},
+      {"q": "Expanded polystyrene foam is mostly…", "options": ["Water", "Air", "Paper"], "answer": 1},
+      {"q": "Which saves the most resources?", "options": ["Recycling a bottle once", "Reusing a bottle many times", "Throwing it in general waste"], "answer": 1}
+    ]
+  }
+}

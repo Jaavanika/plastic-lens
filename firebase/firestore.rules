@@ -1,0 +1,87 @@
+rules_version = '2';
+
+// PlasticLens Firestore security rules (README §10).
+// - Private data lives under users/{uid}/... and user_progress/{uid}: owner only.
+// - Shared reference data (plastic_types, plastic_items, achievements): public
+//   read, admin-only write (custom claim `admin: true`).
+// - feedback: any signed-in user may create their own; only admins read.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function isAdmin() { return signedIn() && request.auth.token.admin == true; }
+    function str(v, max) { return v is string && v.size() <= max; }
+    function optStr(v, max) { return v == null || str(v, max); }
+    function polymer(v) { return v in ['PET', 'HDPE', 'PVC', 'LDPE', 'PP', 'PS']; }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['display_name', 'email', 'created_at', 'photo_backup'])
+        && optStr(request.resource.data.get('display_name', null), 80)
+        && optStr(request.resource.data.get('email', null), 254)
+        && request.resource.data.get('photo_backup', false) is bool;
+
+      match /scans/{scanId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid) && validScan(uid, scanId, request.resource.data);
+      }
+    }
+
+    function validScan(uid, scanId, d) {
+      return d.keys().hasOnly(['scan_id', 'user_id', 'item_name', 'contains_plastic', 'plastic_type',
+                               'resin_code', 'confidence', 'state', 'model_version', 'llm_used',
+                               'user_verified', 'in_collection', 'image_path', 'created_at',
+                               'updated_at', 'second_opinion'])
+        && d.scan_id == scanId
+        && d.user_id == uid
+        && str(d.item_name, 80) && d.item_name.size() > 0
+        && (d.contains_plastic == null || d.contains_plastic is bool)
+        && (d.plastic_type == null || polymer(d.plastic_type))
+        && (d.resin_code == null || (d.resin_code is int && d.resin_code >= 1 && d.resin_code <= 7))
+        && d.confidence is number && d.confidence >= 0 && d.confidence <= 1
+        && d.state in ['high', 'medium', 'low', 'nonPlastic']
+        && str(d.model_version, 40)
+        && d.llm_used is bool && d.user_verified is bool && d.in_collection is bool
+        && (d.image_path == null || d.image_path == 'scans/' + uid + '/' + scanId + '.jpg')
+        && str(d.created_at, 40) && str(d.updated_at, 40)
+        && optStr(d.get('second_opinion', null), 300);
+    }
+
+    match /user_progress/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['points', 'current_streak', 'best_streak', 'badges', 'updated_at'])
+        && request.resource.data.points is int && request.resource.data.points >= 0
+        && request.resource.data.current_streak is int && request.resource.data.best_streak is int
+        && request.resource.data.badges is list && request.resource.data.badges.size() <= 50;
+    }
+
+    match /plastic_types/{code} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /plastic_items/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /achievements/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /feedback/{id} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['user_id', 'scan_id', 'predicted', 'corrected', 'confidence',
+                                                 'model_version', 'created_at', 'status'])
+        && request.resource.data.user_id == request.auth.uid
+        && (polymer(request.resource.data.corrected) || request.resource.data.corrected == 'non_plastic')
+        && request.resource.data.status == 'new'
+        && request.resource.data.created_at == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

@@ -8,7 +8,9 @@ import 'package:uuid/uuid.dart';
 
 import '../models/classification.dart';
 import '../models/scan_record.dart';
+import '../services/auth_service.dart';
 import '../services/classifier_service.dart';
+import '../services/enrich_service.dart';
 import '../services/material_repository.dart';
 import '../services/scan_store.dart';
 import '../widgets/common.dart';
@@ -83,11 +85,20 @@ class _PreviewScreenState extends State<PreviewScreen> {
     final classifier = context.read<ClassifierService>();
     final store = context.read<ScanStore>();
     final materials = context.read<MaterialRepository>();
+    final enrich = context.read<EnrichService>();
+    final auth = context.read<AuthService>();
     try {
+      // The online second opinion runs alongside the on-device model and
+      // is simply skipped when offline, signed out or failing.
+      final Future<EnrichResult?> online = enrich.enabled && auth.signedIn
+          ? auth.idToken().then((t) => t == null ? null : enrich.enrich(widget.imagePath, t)).catchError((Object _) => null)
+          : Future.value(null);
       final result = await classifier.classify(widget.imagePath);
       final id = const Uuid().v4();
       final stored = await persistImage(widget.imagePath, id);
       final scan = buildScan(id, stored, result, materials);
+      final second = await online;
+      if (second != null) applySecondOpinion(scan, second, materials);
       await store.save(scan);
       if (!mounted) return;
       await Navigator.of(context).pushReplacement(
@@ -158,6 +169,29 @@ class _PreviewScreenState extends State<PreviewScreen> {
         ]),
       ),
     );
+  }
+}
+
+/// Merge the online check into a scan (README §6): it names the object,
+/// and a printed resin code beats the classifier; disagreements are shown.
+void applySecondOpinion(ScanRecord scan, EnrichResult r, MaterialRepository materials) {
+  scan
+    ..itemName = r.objectName
+    ..llmUsed = true;
+  final printed = r.printedPolymer;
+  if (printed != null && printed != scan.plasticType) {
+    final model = scan.plasticType == null
+        ? 'the on-device model was unsure'
+        : 'the on-device model suggested ${scan.plasticType} (${(scan.confidence * 100).round()} %)';
+    scan
+      ..secondOpinion = 'A printed resin code ♲${r.resinCode} ($printed) was read in the photo; $model.'
+      ..plasticType = printed
+      ..resinCode = r.resinCode
+      ..containsPlastic = true;
+  } else if (r.resinCode == 7) {
+    scan.secondOpinion = 'A printed resin code ♲7 (other plastics) was read in the photo. PlasticLens does not classify code 7.';
+  } else if (printed == null && r.likelyPolymer != null && r.likelyPolymer != scan.plasticType) {
+    scan.secondOpinion = 'The online check thinks this may be ${r.likelyPolymer}. Check the resin code to be sure.';
   }
 }
 
