@@ -1,0 +1,52 @@
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# ---- Secrets ----
+.env
+*.env
+google-services.json
+GoogleService-Info.plist
+serviceAccountKey*.json
+*.jks
+*.keystore
+key.properties
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- AI model ----
+# Datasets and large weights are not committed (download/regenerate instead)
+ai_model/datasets/*
+!ai_model/datasets/.gitkeep
+!ai_model/datasets/README.md
+ai_model/models/*.pt
+ai_model/models/*.pth
+ai_model/runs/
+
+# ---- Flutter / Android ----
+android_app/.dart_tool/
+android_app/.flutter-plugins
+android_app/.flutter-plugins-dependencies
+android_app/.packages
+android_app/build/
+android_app/android/.gradle/
+android_app/android/local.properties
+android_app/android/app/debug/
+android_app/android/app/release/
+*.apk
+*.aab
+
+# ---- Node / Firebase ----
+node_modules/
+.firebase/
+firebase-debug.log

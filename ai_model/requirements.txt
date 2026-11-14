@@ -1,0 +1,11 @@
+torch
+torchvision
+timm
+onnx
+onnxruntime
+scikit-learn
+pandas
+matplotlib
+pillow
+imagehash
+tqdm
