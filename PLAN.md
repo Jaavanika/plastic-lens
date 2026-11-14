@@ -60,7 +60,7 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 
 - [x] Create the folder structure from README §16.
 - [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
-- [ ] Create a GitHub repository and push.
+- [x] Create a GitHub repository and push (https://github.com/Jaavanika/plastic-lens).
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
 - [x] Android cmdline-tools installed. SDK reached via junction `C:\Android\Sdk` (the real path has a space); `flutter config --android-sdk` and `ANDROID_HOME` point to it.
 - [x] `flutter doctor --android-licenses` (all accepted; Android toolchain passes).
