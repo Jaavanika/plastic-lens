@@ -28,7 +28,7 @@ Because this is a solo project, sections are tagged by priority:
 
 | #  | Section                                 | Week | Depends on | Priority | Status      |
 | -: | --------------------------------------- | ---: | ---------- | -------- | ----------- |
-|  0 | Project setup                           |    1 | --         | Core     | In progress |
+|  0 | Project setup                           |    1 | --         | Core     | Done        |
 |  1 | Flutter UI skeleton (static screens)    |    1 | 0          | Core     | Not started |
 |  2 | Dataset preparation                     |    2 | 0          | Core     | Not started |
 |  3 | Model training and evaluation           |    3 | 2          | Core     | Not started |
@@ -67,7 +67,7 @@ Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/loc
 - [x] Emulator `PlasticLens_Pixel` (Pixel 7, Android 36).
 - [x] Python venv at `C:\src\venvs\plasticlens` (outside the repo); packages from `ai_model/requirements.txt` (CPU torch for local tests; training runs on Colab).
 - [x] `flutter create` → `android_app/` (package `com.plasticlens.plastic_lens`).
-- [ ] Create a Firebase project `plasticlens`.
+- [x] Create a Firebase project `plasticlens` (project ID `plasticlens-61083`, Spark plan).
 - [x] App name and palette: **PlasticLens**, green + ocean blue. Logo: TBD in Section 1.
 
 Activate the Python environment:
@@ -76,7 +76,7 @@ Activate the Python environment:
 C:\src\venvs\plasticlens\Scripts\Activate.ps1
 ```
 
-Deliverables: repo on GitHub, `flutter doctor` passing, Python env working.
+Deliverables: repo on GitHub, `flutter doctor` passing (Visual Studio warning ignored, Windows desktop not targeted), Python env working.
 
 Done when:
 
