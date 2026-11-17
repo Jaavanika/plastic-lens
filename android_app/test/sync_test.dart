@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_storage_mocks/firebase_storage_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plastic_lens/models/scan_record.dart';
@@ -10,6 +11,12 @@ import 'package:plastic_lens/services/local_db.dart';
 import 'package:plastic_lens/services/scan_store.dart';
 
 import 'helpers.dart';
+
+/// Storage on a project without a bucket (Spark plan): any use fails.
+class _ExplodingStorage extends MockFirebaseStorage {
+  @override
+  Reference ref([String? path]) => throw StateError('Storage must not be used');
+}
 
 /// Section 8 "done when": scans made offline appear in Firestore after
 /// reconnecting, with no duplicates.
@@ -81,6 +88,16 @@ void main() {
     await pumpEventQueue(times: 50);
     expect(store.byId('r1')?.plasticType, 'HDPE');
     expect(store.byId('r1')?.syncStatus, SyncStatus.synced);
+  });
+
+  test('account deletion works without Storage when no photos were backed up', () async {
+    final noStorage = CloudSync(store: store, auth: auth, localDb: InMemorySyncState(), firestore: fs,
+        storage: _ExplodingStorage(), onlineChanges: const Stream.empty());
+    await fs.collection('users').doc('u1').collection('scans').doc('s1').set(scan('s1', type: 'PET').toFirestore('u1'));
+    await fs.collection('users').doc('u1').set({'email': 'a@b.c'});
+    await noStorage.deleteCloudData('u1');
+    expect(await remoteCount(), 0);
+    expect((await fs.collection('users').doc('u1').get()).exists, isFalse);
   });
 
   test('account deletion removes all cloud data', () async {

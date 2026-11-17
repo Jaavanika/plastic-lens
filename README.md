@@ -533,8 +533,8 @@ and the new modules in §12 are **not yet implemented**. Their order and
 | §12.4–12.6 Degradation, recommendation and optimization screens | ⏳ To build | PLAN Section 17 |
 | §12.8 Admin / data management | ✅ Partly (materials, feedback via API and Firestore rules) | PLAN Section 17 adds pathway rules, facilities and outcomes |
 | API (FastAPI) | ✅ Built (identification second opinion, materials, feedback, admin) | `backend/`, `documentation/api_documentation.md` |
-| Accounts, cloud sync, security rules | ✅ Built and emulator-tested; live project setup pending | `firebase/`, `android_app/lib/services/` |
-| Landing website | ✅ Built (Lighthouse 100); needs repositioning for the new scope | `website/` |
+| Accounts, cloud sync, security rules | ✅ Built, tested, live on `plasticlens-61083` | `firebase/`, `android_app/lib/services/` |
+| Landing website | ✅ Live at https://plasticlens-61083.web.app (Lighthouse 100); needs repositioning for the new scope | `website/` |
 
 ### Identification results achieved so far
 
@@ -614,9 +614,9 @@ Foundation (identification app):
 - [x] The app identifies the likely polymer on Android, offline, with calibrated confidence.
 - [x] Uncertain and non-plastic inputs are handled safely.
 - [x] AI identification results and model version are documented.
-- [ ] A user can register and sign in. *(implemented; needs the live Firebase setup)*
-- [ ] Cloud synchronisation works when connectivity returns. *(tested against a fake Firestore; needs a live check)*
-- [ ] The landing website is live. *(built; deploy needs `firebase login`)*
+- [x] A user can register and sign in (verified on the live Firebase project).
+- [x] Cloud synchronisation works (automated offline/online tests + live check: wipe phone → sign in → scans restored).
+- [x] The landing website is live: https://plasticlens-61083.web.app
 - [ ] The application has been tested on physical Android devices.
 
 Degradation and route optimization (this README):

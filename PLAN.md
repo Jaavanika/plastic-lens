@@ -46,11 +46,11 @@ Because this is a solo project, sections are tagged by priority:
 |  3 | Model training and evaluation           |    3 | 2          | Core     | Done |
 |  4 | Model export and on-device inference    |    4 | 1, 3       | Core     | Done (phone latency pending) |
 |  5 | Material database and result screen     |    4 | 4          | Core     | Done |
-|  6 | Firebase auth and cloud data            |    5 | 1          | Core     | Code done; needs your Firebase setup |
+|  6 | Firebase auth and cloud data            |    5 | 1          | Core     | Done (live project verified 17 Nov) |
 |  7 | FastAPI backend and LLM enrichment      |    5 | 4, 6       | Stretch  | Code done; needs deploy |
 |  8 | History, collection, sync               |    6 | 5, 6       | Core     | Done (verify on phone) |
 |  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
-| 10 | Landing website                         |    7 | 5          | Core     | Done (deploy needs your login) |
+| 10 | Landing website                         |    7 | 5          | Core     | Done (live) |
 | 11 | Testing, hardening, release, report     |    8 | all        | Core     | Mostly done; phone tests + video need you |
 | 12 | Problem definition and data review (decision gate) | TBD | 11 | Core | In progress: review drafted; target awaits supervisor |
 | 13 | Degradation dataset preparation         |  TBD | 12         | Core     | Started provisionally (S1 curves) |
@@ -238,7 +238,7 @@ Tasks:
 - [x] Upload `plastic_types` to Firestore (`backend/scripts/seed_firestore.py`). **Run it with your service-account key.**
 - [x] Write Firestore + Storage security rules (identification spec §10); tested with the Firebase emulator (`firebase/`, `npm run test:rules`, 9 tests pass).
 - [x] Account deletion (deletes scans, progress, profile, Storage images, then the auth user).
-- [ ] Connect the real project: add `android/app/google-services.json`, enable Email/Password + Google providers, create Firestore + Storage, deploy rules. **Needs your Firebase login.**
+- [x] Connect the real project (17 Nov 2026): `google-services.json` added, Email/Password + Google providers on, Firestore (asia-south1) created, rules deployed. Storage skipped: it needs the paid Blaze plan, and photo backup is optional.
 
 Deliverables: login flow + deployed security rules.
 
@@ -325,7 +325,7 @@ Tasks:
 - [x] Why it matters (facts with sources: UNEP, OECD 2022, Pew/SYSTEMIQ 2020).
 - [x] Download section (GitHub Releases APK link), footer with privacy policy (`privacy.html`).
 - [x] Responsive (phone, tablet, desktop), accessible, fast.
-- [ ] Deploy to Firebase Hosting (`firebase.json` ready). **Needs `firebase login`.**
+- [x] Deploy to Firebase Hosting: **live at https://plasticlens-61083.web.app** (17 Nov 2026).
 
 Deliverables: live URL.
 
@@ -556,10 +556,10 @@ Done when:
 
 ## Your remaining steps for Part A (cannot be done without your accounts or devices)
 
-1. **Back up** `C:\dev\keys\` (keystore + `key.properties.backup`) somewhere safe, e.g. a USB drive or a password manager. Losing it means you can never update the app.
-2. **GitHub release**: github.com/Jaavanika/plastic-lens → Releases → *Draft a new release* → tag `v1.0.0` → attach the APKs from `C:\dev\plastic-lens-release\` → paste `RELEASE_NOTES.md` → Publish. The website's download button points here.
-3. **Firebase**: Console → Add app → Android, package `com.plasticlens.plastic_lens` → download `google-services.json` into `android_app/android/app/`. Then Authentication → enable **Email/Password** and **Google**; create a **Firestore** database and **Storage**. For Google sign-in, add the debug and release SHA-1 fingerprints (see `RELEASE_NOTES.md`).
-4. In a terminal: `cd firebase` → `npx firebase login` → `npm run deploy:rules` → `npm run deploy:hosting` (the website goes live at https://plasticlens-61083.web.app).
+1. ~~**Back up**~~ ✅ done. `C:\dev\keys\` (keystore + `key.properties.backup`) somewhere safe, e.g. a USB drive or a password manager. Losing it means you can never update the app.
+2. ~~**GitHub release**~~ ✅ v1.0.0 published 17 Nov 2026; upload v1.0.1 (with accounts) from `C:\dev\plastic-lens-release\`: github.com/Jaavanika/plastic-lens → Releases → *Draft a new release* → tag `v1.0.0` → attach the APKs from `C:\dev\plastic-lens-release\` → paste `RELEASE_NOTES.md` → Publish. The website's download button points here.
+3. ~~**Firebase**~~ ✅ done 17 Nov 2026: Console → Add app → Android, package `com.plasticlens.plastic_lens` → download `google-services.json` into `android_app/android/app/`. Then Authentication → enable **Email/Password** and **Google**; create a **Firestore** database and **Storage**. For Google sign-in, add the debug and release SHA-1 fingerprints (see `RELEASE_NOTES.md`).
+4. ~~Deploy~~ ✅ rules + website deployed 17 Nov 2026. In a terminal: `cd firebase` → `npx firebase login` → `npm run deploy:rules` → `npm run deploy:hosting` (the website goes live at https://plasticlens-61083.web.app).
 5. *(Optional, Section 7)*: deploy `backend/` to Cloud Run or Render with your `ANTHROPIC_API_KEY`, run `backend/scripts/seed_firestore.py`, then rebuild the APK with `--dart-define=ENRICH_URL=<url>`.
 6. **Phones**: install `app-arm64-v8a-release.apk` on 2 phones and work through the checklist at the end of `documentation/testing.md`.
 7. Record the **demo video** and fill in the name, college and supervisor fields in `capstone_report.md`.

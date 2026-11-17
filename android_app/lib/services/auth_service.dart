@@ -140,7 +140,11 @@ class FirebaseAuthService extends AuthService {
         final cred = await _auth.createUserWithEmailAndPassword(email: email.trim(), password: password);
         await cred.user!.updateDisplayName(name.trim());
         await cred.user!.reload();
-        await _ensureUserDoc(_auth.currentUser!);
+        // authStateChanges fired before the name was set; refresh the user.
+        final u = _auth.currentUser!;
+        _user = AppUser(uid: u.uid, email: u.email, displayName: u.displayName, photoUrl: u.photoURL);
+        notifyListeners();
+        await _ensureUserDoc(u);
       });
 
   @override
@@ -168,6 +172,12 @@ class FirebaseAuthService extends AuthService {
   Future<void> deleteAccount(Future<void> Function(String uid) deleteCloudData) => _guard(() async {
         final u = _auth.currentUser;
         if (u == null) return;
+        // Firebase only deletes accounts with a recent sign-in (~5 min).
+        // Check first, so cloud data is never deleted while the account stays.
+        final lastSignIn = u.metadata.lastSignInTime;
+        if (lastSignIn == null || DateTime.now().difference(lastSignIn) > const Duration(minutes: 4)) {
+          throw AuthException('For your security, sign out and sign in again, then delete your account within a few minutes.');
+        }
         await deleteCloudData(u.uid);
         await u.delete();
         if (_googleReady) await GoogleSignIn.instance.signOut();

@@ -169,8 +169,20 @@ class CloudSync extends ChangeNotifier {
   }
 
   /// Account deletion: every Firestore document and Storage image of [uid].
+  ///
+  /// Photos go first, so a failure cannot leave scans deleted but images
+  /// behind. Storage is only contacted when photos were ever backed up:
+  /// it is optional (not enabled on the free Spark plan) and calls fail
+  /// when no bucket exists.
   Future<void> deleteCloudData(String uid) async {
     final scans = await _scans(uid).get();
+    final hasPhotos = backupPhotos || scans.docs.any((d) => d.data()['image_path'] != null);
+    if (hasPhotos) {
+      final images = await _storage.ref('scans/$uid').listAll();
+      for (final item in images.items) {
+        await item.delete();
+      }
+    }
     WriteBatch batch = _fs.batch();
     var n = 0;
     for (final d in scans.docs) {
@@ -183,10 +195,6 @@ class CloudSync extends ChangeNotifier {
     batch.delete(_fs.collection('user_progress').doc(uid));
     batch.delete(_fs.collection('users').doc(uid));
     await batch.commit();
-    final images = await _storage.ref('scans/$uid').listAll();
-    for (final item in images.items) {
-      await item.delete();
-    }
   }
 
   String? _lastProgress;
