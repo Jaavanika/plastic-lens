@@ -178,7 +178,7 @@ policy table above was re-scored.
 - **One item per photo.** There is no object detector, so cluttered scenes reduce accuracy.
 - Misuse risk is low. The main harm would be wrong recycling advice, which the uncertainty states and the "check your local scheme" note are there to reduce.
 
-## 6. Image test scenarios (README §15.2)
+## 6. Image test scenarios (identification spec §15.2)
 
 `evaluation/scenarios.py` runs the shipped ONNX model and threshold policy
 on the 450 held-out test images, either transformed or as a selected subset.
@@ -209,8 +209,8 @@ Findings:
   are confidently wrong.
 - **Several items in one photo is the weakest case** (17 % confidently wrong).
   The scanner asks users to "Fill the frame with one item". An object detector
-  (README §5, optional YOLOv8n) would be the next improvement.
-- Transparent PET is harder than the average class (84.5 %), as README §19 predicted.
+  (identification spec §5, optional YOLOv8n) would be the next improvement.
+- Transparent PET is harder than the average class (84.5 %), as identification spec §19 predicted.
 - The dark-plastics subset is too small (8 images) to draw conclusions from.
   It should be re-tested with real photos.
 - Crushed objects, plastic bags and unseen backgrounds are covered only by

@@ -37,7 +37,7 @@ MODELS = AI / "models"
 FIGURES = AI.parent / "documentation" / "figures"
 NON_PLASTIC = CLASSES.index("non_plastic")
 
-# Target accuracy of the predictions shown at each level (README §7.5).
+# Target accuracy of the predictions shown at each level (identification spec §7.5).
 HIGH_TARGET = 0.95
 MEDIUM_TARGET = 0.85
 

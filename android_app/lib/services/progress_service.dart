@@ -54,7 +54,7 @@ class Progress {
       };
 }
 
-/// Points, streaks and badges derived from scans and lessons (README §14).
+/// Points, streaks and badges derived from scans and lessons (identification spec §14).
 ///
 /// Everything is recomputed from the records, so results are deterministic,
 /// work offline and cannot drift. Unreliable predictions earn nothing.

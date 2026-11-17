@@ -1,6 +1,6 @@
 import 'plastic_type.dart';
 
-/// How much the app trusts a prediction (README §7.5).
+/// How much the app trusts a prediction (identification spec §7.5).
 enum ResultState { high, medium, low, nonPlastic }
 
 /// Confidence cut-offs. Defaults are provisional; Section 3 replaces them

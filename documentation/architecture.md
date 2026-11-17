@@ -28,7 +28,7 @@
 | --- | --- |
 | On-device MobileNetV3-Large (ONNX) | Works offline, costs nothing per scan, keeps photos private, and gives measurable metrics. |
 | Temperature scaling inside the ONNX graph | The app reads calibrated probabilities directly, so Python and Dart cannot drift apart on calibration. |
-| `labels.json` ships next to the model | Class order, thresholds, input spec and model version travel together (README §12). |
+| `labels.json` ships next to the model | Class order, thresholds, input spec and model version travel together (identification spec §12). |
 | Offline-first local database | Every scan is saved locally first (`sync_status = pending`) and pushed when the user is signed in and online. |
 | UUID scan ids = Firestore document ids | Retries overwrite rather than duplicate, so sync is idempotent. Deletes made offline are kept as tombstones. |
 | Firebase is optional at build time | Without `google-services.json` the app runs local-only. This keeps the repo free of secrets and the app usable without an account. |
@@ -41,7 +41,7 @@
 | Path | Contents | Access |
 | --- | --- | --- |
 | `users/{uid}` | display name, email, created_at, photo_backup | owner |
-| `users/{uid}/scans/{scanId}` | scan record (README §10) | owner, validated fields |
+| `users/{uid}/scans/{scanId}` | scan record (identification spec §10) | owner, validated fields |
 | `user_progress/{uid}` | points, streaks, badges | owner, validated |
 | `plastic_types/{code}` | material records | public read, admin write |
 | `plastic_items/{id}` | item descriptions (reserved) | public read, admin write |

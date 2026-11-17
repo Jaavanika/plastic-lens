@@ -115,7 +115,7 @@ class FirebaseAuthService extends AuthService {
         _ => e.message ?? 'Authentication failed (${e.code}).',
       };
 
-  /// Creates `users/{uid}` on first sign-in (README §10).
+  /// Creates `users/{uid}` on first sign-in (identification spec §10).
   Future<void> _ensureUserDoc(fb.User u) async {
     final ref = _db.collection('users').doc(u.uid);
     final snap = await ref.get();

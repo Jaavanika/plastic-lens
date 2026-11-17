@@ -2,7 +2,7 @@ import 'classification.dart';
 
 enum SyncStatus { pending, synced }
 
-/// A saved scan (README §10 "Example scan record").
+/// A saved scan (identification spec §10 "Example scan record").
 class ScanRecord {
   ScanRecord({
     required this.id,
@@ -44,7 +44,7 @@ class ScanRecord {
   /// Note from the online check when it disagreed with the on-device model.
   String? secondOpinion;
 
-  /// Whether this scan counts towards points and badges (README §14).
+  /// Whether this scan counts towards points and badges (identification spec §14).
   /// Medium ("please verify") and low results only count once verified.
   bool get isReliable =>
       userVerified || state == ResultState.high || state == ResultState.nonPlastic;

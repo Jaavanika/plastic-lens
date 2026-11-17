@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// PlasticLens Firestore security rules (README §10).
+// PlasticLens Firestore security rules (identification spec §10).
 // - Private data lives under users/{uid}/... and user_progress/{uid}: owner only.
 // - Shared reference data (plastic_types, plastic_items, achievements): public
 //   read, admin-only write (custom claim `admin: true`).

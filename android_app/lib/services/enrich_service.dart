@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/plastic_type.dart';
 
-/// Validated result of the backend's vision-LLM check (README §6).
+/// Validated result of the backend's vision-LLM check (identification spec §6).
 class EnrichResult {
   const EnrichResult({required this.objectName, this.containsPlastic, this.resinCode, this.likelyPolymer, this.notes});
   final String objectName;

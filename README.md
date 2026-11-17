@@ -1,890 +1,629 @@
-# PlasticLens -- AI-Powered Plastic Identification and Recycling Assistant
+# AI-Based Plastic Waste Degradation Prediction for Intelligent Recycling Route Optimization
 
-> **Project type:** Android application (Flutter) + promotional landing website
-> **Primary goal:** Identify likely plastic materials from photographs and
-> provide useful material, recycling, and educational information.
-> **Proposed development timeline:** 8 weeks for an initial end-to-end implementation
-> **Initial AI classes:** PET, HDPE, PVC, LDPE, PP, and PS
-> **Implementation plan:** see [PLAN.md](PLAN.md)
+> **Project type:** AI/ML-based plastic waste assessment and intelligent reuse/recycling decision-support system  
+> **Core idea:** Predict the degradation condition and remaining reuse potential of plastic waste, then recommend and optimize the most suitable recovery pathway so that usable material can be reused or recycled effectively.  
+> **Primary outcome:** A data-driven decision on what should happen to each plastic item or batch next.  
+> **Prototype name:** PlasticLens (Android app + landing website)  
+> **Implementation plan:** [PLAN.md](PLAN.md) · **Current status:** [§19](#19-current-implementation-status)  
+> **Earlier identification-only specification:** [documentation/plasticlens_identification_spec.md](documentation/plasticlens_identification_spec.md)
 
 ---
 
 ## 1. Project Overview
 
-PlasticLens is an Android application inspired by the functionality of
-the Sustainable Design Studio Plastic Scanner. It is an independent
-implementation with its own name, user interface, code, model, database,
-and content.
+Plastic waste does not have the same condition or recovery potential. Two items made from the same polymer may have different levels of degradation because of their age, exposure to sunlight, temperature, moisture, mechanical stress, contamination, and previous usage.
 
-A user can photograph a plastic item or choose an image from the
-gallery. The application analyses the image and displays a result card
-containing:
+This project proposes an AI-based system that analyses available information about plastic waste, predicts its degradation condition, estimates its suitability for further use, and recommends an appropriate recycling or reuse pathway.
 
-| Field            | Example        | Produced by                         |
-| ---------------- | -------------- | ----------------------------------- |
-| Object           | Water Bottle   | Object-naming stage (see §6)        |
-| Plastic presence | Yes            | Plastic / non-plastic gate (see §6) |
-| Plastic type(s)  | PET            | Polymer classifier (see §6)         |
-| Confidence       | 94.3 %         | Calibrated classifier output        |
-| Material info    | PET description, recycling notes | Material database (see §9) |
+The system combines plastic identification, degradation prediction, condition assessment, and intelligent route optimization. Here, **recycling route optimization means selecting the most suitable next-use or recovery pathway for the plastic**. It does not primarily mean optimizing the vehicle route used to transport waste.
 
-The application also supports user accounts, scan history, personal
-collections, achievements, learning content, and synchronisation with
-cloud services. A public landing website (§13) presents the app and links
-to the APK / Play Store listing.
+For example, a plastic item that is still in good condition may be directed toward direct reuse or preparation for reuse. Material with moderate degradation may be directed toward an appropriate mechanical recycling process. Material that is severely degraded, contaminated, or unsuitable for the intended reuse may be directed toward another validated recovery or disposal option, depending on local facilities and safety requirements.
 
-### Important identification limitation
+The project is proposed as our own system concept. Its technical contribution is the integration of degradation prediction with condition-aware pathway selection and optimization.
 
-A normal RGB photograph cannot reliably establish the chemical
-composition of every plastic object. The model predicts a likely visual
-category based on its training data; it does not perform laboratory
-polymer analysis. The app must communicate uncertainty, support manual
-verification, and avoid presenting a visual prediction as a guaranteed
-material identification.
+### Important scientific limitation
+
+A camera image alone cannot reliably measure the chemical or mechanical degradation of every plastic item. The prediction must therefore be based on the evidence and data actually available, such as polymer type, known exposure history, observed condition, contamination indicators, and suitable reference measurements in the training dataset. The system must communicate uncertainty and must not present an AI estimate as a laboratory material test.
 
 ---
 
-## 2. Project Objectives
+## 2. Problem Statement
 
-1.  Build a complete Android application for plastic-item scanning.
-2.  Support camera capture and gallery image selection.
-3.  Fine-tune a pretrained image-classification model for plastic categories.
-4.  Detect whether an image contains plastic at all, and name the object.
-5.  Display a clear identification result and confidence information.
-6.  Maintain a structured plastic-material information database.
-7.  Provide recycling and disposal guidance that can be adapted to local facilities.
-8.  Save scan history and personal collections.
-9.  Add learning resources, points, achievements, and scanning streaks.
-10. Support offline AI inference on Android.
-11. Provide cloud synchronisation, user authentication, and administration.
-12. Publish a landing website similar in purpose to the reference page.
+Current plastic waste handling often relies on broad material categories and fixed recycling rules. However, polymer type alone does not determine whether an item can be reused, mechanically recycled, or needs another treatment. Its current condition, contamination, degradation level, and the requirements of the intended next application also matter.
+
+A decision system is needed to:
+
+1. Identify or record the plastic material.
+2. Estimate its degradation condition using available evidence.
+3. assess its remaining suitability for reuse or recycling.
+4. Compare feasible recovery pathways.
+5. Recommend the pathway that best meets defined objectives and constraints.
+6. Explain why that pathway was selected and identify when more inspection or testing is needed.
 
 ---
 
-## 3. Scope and Features
+## 3. Project Objectives
 
-### 3.1 Core scanning
-
--   Capture an image using the Android camera.
--   Select an image from the device gallery.
--   Preview, retake, or crop an image.
--   Validate image format, dimensions, and file size.
--   Run image preprocessing.
--   Run the on-device AI model.
--   Display the object name, plastic presence, predicted class, and confidence.
--   Show an uncertain-result state when confidence is low or the image
-    is unsuitable.
-
-### 3.2 Identification result
-
-The result screen should display:
-
--   Object name (from the AI, editable by the user).
--   Plastic presence (Yes / No / Unsure).
--   Predicted plastic type.
--   Full polymer name.
--   Resin identification code, where applicable.
--   Model confidence and an explanation that it is not a laboratory
-    measurement.
--   Material properties.
--   Other commonly associated materials, where known.
--   Recycling and disposal guidance.
--   Recyclability information with local-context caveats.
--   Educational fact and eco tip.
--   Save-to-collection action.
-
-### 3.3 User features
-
--   Registration, sign-in, and sign-out.
--   User profile.
--   Scan history.
--   Search and filter history.
--   Personal collection of identified items.
--   Achievements and points.
--   Daily or weekly scanning streaks.
--   Learning library.
--   Feedback or correction submission.
--   Privacy and data-deletion controls.
-
-### 3.4 Administration features
-
-A protected admin workflow should allow authorised maintainers to:
-
--   Add and update material records.
--   Add and update item descriptions.
--   Review user-submitted corrections.
--   Maintain recycling guidance.
--   Manage learning content.
--   Review aggregate model feedback.
--   Publish updated model versions and class labels.
-
-For the first release, admin tasks may be done directly in the Firebase
-Console; a custom admin UI is optional.
+1. Develop a system for recording and classifying plastic waste by polymer type.
+2. Build an AI model to estimate plastic degradation condition from suitable labelled data.
+3. Identify the factors that contribute to degradation, such as UV exposure, temperature, moisture, age, mechanical stress, and contamination, where data is available.
+4. Estimate the likely reuse or recycling suitability of each item or batch.
+5. Develop a pathway recommendation engine that considers material type, predicted condition, contamination, and intended output.
+6. Optimize the selection of reuse and recycling pathways against configurable objectives such as recovery value, material quality, processing cost, energy use, and waste reduction.
+7. Provide an explanation of the recommended pathway and the evidence supporting it.
+8. Record outcomes so that recommendations can be evaluated and improved using verified data.
 
 ---
 
-## 4. Proposed Technology Stack
+## 4. Scope and Main Features
 
-| Layer                 | Technology                         | Responsibility                                  |
-| --------------------- | ---------------------------------- | ----------------------------------------------- |
-| Android frontend      | Flutter and Dart                   | Screens, navigation, camera, gallery            |
-| UI components         | Material 3                         | Consistent Android interface                    |
-| AI training           | Python, PyTorch, `timm`            | Fine-tuning and evaluation                      |
-| Polymer classifier    | MobileNetV3-Large                  | Polymer image classification                    |
-| Plastic gate          | Same network, extra "non-plastic" class, or a small binary model | Plastic presence |
-| Object naming (cloud) | Vision LLM via FastAPI (optional)  | Object name, resin-code reading, second opinion |
-| Optional detector     | YOLOv8n                            | Locating objects in cluttered images            |
-| On-device inference   | ONNX Runtime Mobile (or TFLite)    | Offline model inference                         |
-| Backend API           | Python and FastAPI                 | LLM proxy, admin, analytics                     |
-| Authentication        | Firebase Authentication            | User identity                                   |
-| Database              | Cloud Firestore                    | Users, scans, collections, material records     |
-| Image storage         | Firebase Storage                   | Optional cloud image storage                    |
-| Notifications         | Firebase Cloud Messaging           | Notifications                                   |
-| Landing website       | HTML/CSS/JS (or React + Vite)      | Public promotional page                         |
-| Website hosting       | Firebase Hosting                   | Hosting the landing page                        |
-| Version control       | Git and GitHub                     | Source control                                  |
-| API testing           | Postman                            | Endpoint testing                                |
-| Python testing        | Pytest                             | Backend and ML tests                            |
-| Flutter testing       | `flutter test`                     | Widget and application tests                    |
+### 4.1 Plastic waste input
 
-### Architecture choice
+The system can accept:
+- A photograph of the plastic item or waste batch.
+- Polymer type, if known, or a model-predicted material category.
+- Item or batch details.
+- Known age or usage history, if available.
+- Exposure information such as sunlight, heat, moisture, and outdoor storage, if available.
+- Visible condition observations such as cracks, discoloration, brittleness, deformation, and surface damage.
+- Contamination information, if available.
+- Laboratory or measured properties, when supplied by a dataset or an authorized inspection process.
 
-Use a **hybrid architecture**:
+The system must distinguish between measured values, user-entered information, and AI-estimated values.
 
--   Run the classifier on the Android device for offline scanning.
--   Use Firebase directly from the app for authentication, user data, and
-    optional image storage (protected by Firestore security rules).
--   Use FastAPI only for things that must not run on the phone: calling a
-    vision LLM with a secret API key, admin operations, and analytics.
+### 4.2 Plastic identification
 
-The application should not need to upload every image just to make a
-basic prediction. Never embed an LLM API key inside the Android app.
+A pretrained image model may be fine-tuned to classify common polymer categories:
+- PET
+- HDPE
+- PVC
+- LDPE
+- PP
+- PS
+
+A photo-based classifier provides a likely material category, not definitive chemical identification. Resin markings and user-confirmed labels may be stored as additional evidence. Items with uncertain identification should be flagged for verification.
+
+### 4.3 Degradation prediction
+
+The degradation model estimates a target supported by the available dataset. Depending on the dataset, this may be:
+- A degradation or condition category (for example, low, moderate, or high degradation).
+- A measured property such as tensile strength retention, elongation at break, molecular-weight change, or another documented degradation indicator.
+- A predicted condition score, only where a defensible target definition and ground-truth labels exist.
+
+The model must not invent a universal degradation score where the training data does not support one. The target variable, units, measurement method, and prediction horizon must be documented.
+
+### 4.4 Reuse and recycling suitability
+
+The system combines polymer identity, predicted condition, contamination status, and intended application requirements to estimate which pathways are feasible.
+
+Possible pathway categories include:
+- Direct reuse, where the item is safe and suitable for the intended use.
+- Cleaning and preparation for reuse.
+- Mechanical recycling.
+- Specialized recycling or treatment, where locally available and technically appropriate.
+- Energy recovery or disposal, only where permitted and where higher-value recovery is unsuitable.
+
+The system should not recommend food-contact, medical, structural, or other safety-critical reuse solely from an AI prediction. Such uses require applicable standards, testing, and regulatory checks.
+
+### 4.5 Intelligent route optimization
+
+The optimizer selects the most suitable pathway from the feasible options. It can consider:
+- Predicted degradation and uncertainty.
+- Polymer compatibility.
+- Contamination and sorting requirements.
+- Expected recovered-material quality.
+- Processing cost and energy demand.
+- Expected material recovery or reuse value.
+- Local facility availability and accepted material types.
+- Environmental objectives and applicable regulations.
+
+The meaning of “route” in this project is the **material's recovery journey**: the sequence of steps and destination process through which the plastic can be reused or recovered.
 
 ---
 
-## 5. High-Level System Architecture
+## 5. Proposed System Workflow
+
+1. **Input collection:** Receive an image and available item or batch information.
+2. **Material identification:** Predict or record the polymer category and retain its confidence or verification status.
+3. **Condition evidence extraction:** Record visible damage and available exposure, contamination, and history information.
+4. **Degradation prediction:** Run the trained model to estimate the selected degradation target.
+5. **Suitability assessment:** Compare the predicted condition and material information with pathway-specific requirements.
+6. **Candidate pathway generation:** Generate the feasible reuse, recycling, treatment, or disposal options.
+7. **Route optimization:** Rank or optimize feasible pathways against the configured objectives and constraints.
+8. **Recommendation and explanation:** Display the recommended pathway, alternatives, reasons, and uncertainty.
+9. **Outcome recording:** Store verified processing outcomes for evaluation and future model improvement.
+
+---
+
+## 6. High-Level Architecture
 
 ```text
-                    ANDROID APPLICATION (Flutter / Dart)
-                                  |
-                   +--------------+--------------+
-                   |                             |
-              Camera Module                Gallery Module
-                   |                             |
-                   +--------------+--------------+
-                                  |
-                         Image Validation
-                                  |
-                        Image Preprocessing
-                                  |
-                 [Optional] Object Detection (YOLOv8n)
-                                  |  crop
-                                  v
-                 On-device Classifier (ONNX Runtime)
-                 MobileNetV3: PET/HDPE/PVC/LDPE/PP/PS
-                         + non-plastic class
-                                  |
-                       Prediction Handling
-               (thresholds, uncertain / unknown state)
-                                  |
-          +-----------------------+------------------------+
-          |                                                |
-  Plastic Information Engine                 [Optional, online only]
-  (local material database)                  FastAPI -> Vision LLM
-          |                                  object name, resin code,
-          |                                  second opinion
-          +-----------------------+------------------------+
-                                  |
-                            Result Screen
-                                  |
-                          Local Scan Record
-                                  |
-                        Cloud Synchronisation
-                                  |
-                 Firebase Auth / Firestore / Storage
+                 USER / WASTE OPERATOR
+                          |
+                          v
+              Mobile or Web Application
+                          |
+                          v
+                 Plastic Waste Input
+          (Image + Item / Batch Information)
+                          |
+             +------------+------------+
+             |                         |
+             v                         v
+     Plastic Identification     Condition Evidence
+       Model / Markings         and History Records
+             |                         |
+             +------------+------------+
+                          |
+                          v
+               Feature Preparation
+                          |
+                          v
+              Degradation Prediction
+                    AI Model
+                          |
+                          v
+              Condition / Uncertainty
+                    Assessment
+                          |
+                          v
+             Reuse-Recycling Suitability
+                    Assessment
+                          |
+                          v
+               Candidate Pathways
+                          |
+                          v
+              Intelligent Optimization
+                          |
+                          v
+             Recommended Recovery Route
+                          |
+                          v
+        Explanation + Alternative Pathways
+                          |
+                          v
+             Outcome and Feedback Records
 ```
 
-### Initial implementation simplification
+---
 
-Start with a single MobileNetV3 classifier on a cropped or user-centred
-image. Add YOLO object detection only if tests show that locating an
-object in cluttered scenes is necessary. Add the LLM stage after the
-offline path works. This avoids adding complexity before it is justified.
+## 7. AI and Optimization Design
+
+### 7.1 Plastic classification model
+
+A pretrained image-classification model can be fine-tuned to recognize the polymer categories represented in the selected dataset.
+
+Candidate models:
+- MobileNetV3
+- EfficientNet-B0
+- ResNet50
+
+Model selection should be based on validation performance, class balance, inference speed, and deployment requirements. If the project uses photographs alone, the classifier's limitations must be clearly stated.
+
+### 7.2 Degradation prediction model
+
+The model type depends on the available labels and input features.
+
+For tabular data:
+- Random Forest
+- XGBoost
+- LightGBM
+- Gradient Boosting
+
+For image-based condition classification:
+- EfficientNet or ResNet-based image classifier
+- A multi-input model if image features and tabular evidence are both available
+
+For numeric degradation targets, use a regression model and evaluate it with appropriate regression metrics. For degradation categories, use a classification model and evaluate it with classification metrics.
+
+Do not select a model before inspecting the dataset. First establish the target variable, features, sample count, measurement conditions, and missing-data pattern.
+
+### 7.3 Suitability and pathway recommendation
+
+A rule-based or hybrid decision layer can initially translate predicted condition into feasible pathways. The rules should be based on documented material and process requirements, not arbitrary thresholds.
+
+Each candidate pathway should specify:
+- Accepted polymer types.
+- Permitted condition range or measured-property requirements.
+- Contamination limits.
+- Required pre-processing.
+- Available facility or process.
+- Expected output and quality.
+- Cost, energy, and environmental data, if available.
+
+### 7.4 Optimization engine
+
+The optimizer compares the feasible pathways and selects the best one under the chosen objective and constraints.
+
+Potential objectives:
+- Maximize useful material recovery.
+- Maximize reuse value or recovered-material quality.
+- Minimize processing cost.
+- Minimize energy use or estimated environmental impact.
+- Minimize material sent to disposal.
+
+Potential methods:
+- Weighted multi-criteria decision analysis for an initial prototype.
+- Linear programming when pathway costs, capacities, and material flows can be represented linearly.
+- Mixed-integer optimization when discrete process choices and facility capacities are involved.
+- Multi-objective optimization when trade-offs between cost, recovery, quality, and environmental impact must be shown.
+
+The project should begin with a transparent baseline optimizer and compare it with more advanced optimization only if the data and project scope justify it.
 
 ---
 
-## 6. Identification Approach: Trained Model vs. LLM
+## 8. Example of How the Optimization Enables Reuse
 
-Two ways exist to identify the plastic in a photo.
+Consider a batch of identified HDPE containers.
 
-| Criterion                 | Fine-tuned model (MobileNetV3)             | Vision LLM (e.g. Claude, Gemini, GPT)          |
-| ------------------------- | ------------------------------------------ | ---------------------------------------------- |
-| Training needed           | Yes (dataset, GPU, ~1–2 weeks)             | No (prompt only)                               |
-| Works offline             | Yes                                        | No                                             |
-| Cost per scan             | Free                                       | Paid per API call                              |
-| Speed                     | ~50–200 ms on device                       | ~1–5 s network round-trip                      |
-| Names the object          | No (only the trained classes)              | Yes ("water bottle", "yogurt cup")             |
-| Reads the resin code ♲    | No                                         | Yes, if visible in the photo                   |
-| Polymer accuracy          | Measurable on a test set                   | Unmeasured, can sound confident when wrong     |
-| Privacy                   | Image stays on device                      | Image sent to a third party                    |
-| Capstone value            | Shows ML work: dataset, training, metrics  | Integration work only                          |
+- The material identification module predicts HDPE.
+- The degradation model estimates the batch condition using the available condition and exposure data.
+- The suitability module checks contamination and the requirements of possible next-use pathways.
+- The optimizer compares direct reuse after cleaning, mechanical recycling, and other locally valid options.
+- If the containers meet the documented requirements for a reuse pathway, the system can recommend cleaning and reuse rather than sending the batch directly for material recycling.
+- If the condition or contamination makes direct reuse unsuitable, the optimizer can recommend an appropriate recycling process instead.
 
-**Decision: hybrid.**
+This demonstrates how optimization supports reuse: **it directs each plastic item or batch toward the most suitable next application or recovery process based on its predicted condition**, rather than sending every item through the same fixed route.
 
-1.  **Primary (required): a trained on-device classifier.** It gives
-    offline scanning, zero per-scan cost, and measurable metrics (accuracy,
-    F1, confusion matrix) for the project report.
-2.  **Secondary (optional, online): a vision LLM called through FastAPI.**
-    It fills the *Object* field, reads a visible resin code, and gives a
-    second opinion. If the LLM reads a resin code that disagrees with the
-    classifier, prefer the printed code and show both to the user.
-3.  The LLM output must be requested as strict JSON and validated, e.g.:
+This is an illustrative workflow. Actual decisions require validated thresholds, process data, local facility information, and relevant safety standards.
 
-```json
-{
-  "object_name": "Water Bottle",
-  "contains_plastic": true,
-  "resin_code_visible": 1,
-  "likely_polymer": "PET",
-  "notes": "Clear bottle, ribbed label area"
-}
+---
+
+## 9. Data Requirements and Dataset Strategy
+
+Dataset selection is a critical dependency. A plastic image dataset that only contains polymer labels is not sufficient to train a degradation prediction model.
+
+The project may require separate datasets for:
+
+1. **Plastic type identification:** Images labelled by polymer type.
+2. **Plastic degradation:** Samples with documented exposure conditions and measured degradation outcomes.
+3. **Material properties:** Measurements such as tensile strength, elongation, molecular weight, or other properties that the project chooses to predict.
+4. **Recycling pathway information:** Process compatibility, contamination requirements, facility capabilities, costs, energy use, and recovered output quality.
+
+Potential data sources to investigate include:
+- Research papers and supplementary datasets on polymer weathering and accelerated ageing.
+- Open materials-science repositories.
+- Polymer degradation studies with measured before-and-after properties.
+- Public plastic-waste image datasets for the separate identification component.
+- Local recycling-facility acceptance criteria and process specifications.
+
+Before using any dataset, verify its licence, label definitions, measurement methods, sample size, and suitability for the intended prediction. Do not combine measurements from incompatible experiments without documenting and addressing differences in polymer grade, specimen preparation, exposure conditions, and measurement protocols.
+
+### Recommended data preparation
+
+- Remove duplicates and invalid records.
+- Standardize units and categorical values.
+- Preserve experimental and sample identifiers.
+- Handle missing values transparently.
+- Examine class imbalance and target distribution.
+- Split data by sample, batch, or experiment where appropriate to prevent leakage.
+- Keep a held-out test set that is not used for model or threshold selection.
+- Record dataset provenance and preprocessing steps.
+
+---
+
+## 10. Evaluation Plan
+
+### 10.1 Plastic identification
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- Confusion matrix
+- Per-class performance
+
+### 10.2 Degradation prediction
+
+For regression:
+- MAE
+- RMSE
+- R-squared, interpreted alongside error metrics
+
+For classification:
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- Confusion matrix
+- Per-class recall
+
+Also assess calibration or uncertainty where possible. Report performance separately across polymer types and exposure conditions if the dataset supports it.
+
+### 10.3 Pathway recommendation and optimization
+
+Evaluate:
+- Agreement with expert- or process-validated pathway labels.
+- Feasibility constraint violations.
+- Predicted versus actual recovered material quality, where outcome data exists.
+- Recovery yield.
+- Processing cost and energy, where measured.
+- Amount directed to reuse or recycling versus disposal.
+- Sensitivity to uncertain degradation predictions and changes in objective weights.
+
+Compare the optimizer with a simple baseline, such as a fixed rule-based pathway assignment. Do not claim environmental or economic improvement unless it is measured against a defined baseline.
+
+---
+
+## 11. Suggested Technology Stack
+
+| Layer | Suggested technology |
+|---|---|
+| Application | Flutter / Dart or a web interface |
+| AI development | Python |
+| Data processing | Pandas, NumPy, scikit-learn |
+| Deep learning | PyTorch or TensorFlow |
+| Image classification | MobileNetV3 / EfficientNet |
+| Tabular prediction | XGBoost / Random Forest |
+| Optimization | OR-Tools or SciPy; advanced solver if needed |
+| API | FastAPI |
+| Database | PostgreSQL or SQLite for prototype |
+| Visualization | Streamlit or Flutter dashboard |
+| Testing | Pytest |
+| Version control | Git and GitHub |
+
+The technology stack is a proposal and can be adjusted after the dataset and deployment requirements are confirmed.
+
+---
+
+## 12. Suggested Application Modules
+
+1. **Dashboard:** Summary of scanned or registered plastic items and their recommended pathways.
+2. **Add Waste Item:** Upload an image and enter available material, history, condition, and contamination information.
+3. **Material Identification:** Show predicted polymer type and verification status.
+4. **Degradation Assessment:** Show the predicted degradation target, units or category, uncertainty, and key input factors.
+5. **Reuse and Recycling Recommendation:** Show the feasible pathways and why some options are unsuitable.
+6. **Optimization Results:** Show the recommended recovery route and alternative pathways.
+7. **History:** Maintain past assessments and pathway decisions.
+8. **Admin / Data Management:** Manage material rules, facility information, and verified outcome records.
+
+---
+
+## 13. Example Result Screen
+
+```text
+PLASTIC WASTE ASSESSMENT
+
+Material: HDPE
+Identification status: Model prediction
+Degradation estimate: Moderate
+Prediction confidence / uncertainty: Displayed from validated model
+
+Condition observations:
+- Surface discoloration: Detected
+- Visible cracking: Not detected
+- Contamination: Requires confirmation
+
+Pathway assessment:
+1. Cleaning and preparation for reuse
+   Status: Requires suitability checks
+2. Mechanical recycling
+   Status: Candidate pathway
+3. Direct reuse without preparation
+   Status: Not recommended until inspected
+
+Recommended next step:
+Inspect and clean the batch, then verify whether it meets
+the documented reuse requirements.
+
+Reason:
+The selected pathway considers the predicted condition,
+material type, contamination status, and pathway constraints.
+
+Note:
+This is an AI-assisted decision, not a laboratory certification.
 ```
 
-If budget or connectivity is a problem, the app still works fully with the
-on-device model alone; the object name is then entered by the user.
+All values above are illustrative, not model outputs or universal material thresholds.
 
 ---
 
-## 7. AI and Machine Learning Plan
+## 14. Implementation Roadmap
 
-### 7.1 Initial classes
+### Phase 1 — Problem definition and data review
+- Define the exact degradation target.
+- Identify suitable datasets and licences.
+- Determine which features are genuinely available.
+- Define pathway categories and evaluation criteria.
 
-| Class ID | Class                                 | Resin identification code |
-| -------: | ------------------------------------- | ------------------------: |
-|        0 | PET -- Polyethylene Terephthalate     |                         1 |
-|        1 | HDPE -- High-Density Polyethylene     |                         2 |
-|        2 | PVC -- Polyvinyl Chloride             |                         3 |
-|        3 | LDPE -- Low-Density Polyethylene      |                         4 |
-|        4 | PP -- Polypropylene                   |                         5 |
-|        5 | PS -- Polystyrene                     |                         6 |
-|        6 | Non-plastic (recommended addition)    |                         – |
+### Phase 2 — Data preparation
+- Clean and standardize datasets.
+- Analyse distributions and missing values.
+- Create leakage-resistant train, validation, and test splits.
+- Build reproducible preprocessing pipelines.
 
-The resin identification code is a material-identification convention;
-it does not guarantee that an item is accepted by a local recycling
-programme. Code 7 ("Other") is out of scope for the first model.
+### Phase 3 — Baseline AI models
+- Train a plastic identification model if required.
+- Train a baseline degradation model.
+- Evaluate per-polymer and per-condition performance.
+- Document uncertainty and limitations.
 
-The non-plastic class can be trained with the non-plastic categories of
-TrashNet (glass, paper, cardboard, metal). Other categories, including
-mixed plastics, should be added only when suitable labelled training data
-and evaluation evidence are available.
+### Phase 4 — Suitability assessment
+- Define pathway requirements from reliable technical sources.
+- Implement feasibility checks.
+- Ensure unsafe or unsupported pathways are excluded.
 
-### 7.2 Pretrained model selection
+### Phase 5 — Route optimization
+- Implement a transparent baseline decision method.
+- Add objective weights and constraints.
+- Compare recommended pathways against a fixed-rule baseline.
+- Test how recommendations change when inputs or priorities change.
 
-| Model             | Role                 | Notes                                        |
-| ----------------- | -------------------- | -------------------------------------------- |
-| MobileNetV3-Large | Primary candidate    | Efficient and suitable for mobile deployment |
-| EfficientNet-B0   | Comparison candidate | Alternative accuracy/size trade-off          |
-| ResNet50          | Baseline candidate   | Larger model for comparison                  |
+### Phase 6 — Application and API
+- Build the input and results interface.
+- Connect model inference and optimization through an API.
+- Store assessments and pathway decisions.
+- Add explanations and history.
 
-**Recommended starting point: MobileNetV3-Large.**
+### Phase 7 — Testing and final evaluation
+- Test missing, noisy, and uncertain inputs.
+- Test infeasible pathway scenarios.
+- Evaluate AI models on held-out data.
+- Evaluate optimizer feasibility and performance.
+- Document limitations and future improvements.
 
-Use pretrained weights, replace the original classification head with a
-new head, and fine-tune on the project dataset.
-
-```python
-import timm
-
-model = timm.create_model(
-    "mobilenetv3_large_100",
-    pretrained=True,
-    num_classes=7,  # 6 polymers + non-plastic
-)
-```
-
-This creates a model architecture with pretrained weights and a new
-output layer. It does not train the model; training code, labelled data,
-and evaluation are still required.
-
-### 7.3 Training workflow
-
-1.  Download and inspect datasets.
-2.  Verify class labels and annotations.
-3.  Remove corrupted and duplicate images.
-4.  Create object crops if bounding-box annotations are available.
-5.  Split data into training, validation, and test sets.
-6.  Ensure images of the same physical object or source do not leak
-    across splits.
-7.  Resize images to the model input size, initially 224 × 224.
-8.  Apply the correct pretrained-model normalisation.
-9.  Apply realistic augmentation.
-10. Handle class imbalance (weighted loss or weighted sampling; PVC has
-    the fewest images).
-11. Train the new classification head.
-12. Fine-tune selected feature layers.
-13. Evaluate on the untouched test set.
-14. Calibrate prediction confidence and define an unknown/uncertain path.
-15. Export the selected model to ONNX.
-16. Verify that ONNX predictions match the PyTorch model within an
-    acceptable tolerance.
-17. Test latency, memory use, and battery impact on Android devices.
-
-### 7.4 Image preprocessing
-
-Inference preprocessing (must be identical in Python and in the app):
-
--   Decode image safely.
--   Correct orientation using EXIF metadata.
--   Validate minimum image dimensions.
--   Crop the detected object if object detection is used.
--   Resize to 224 × 224.
--   Convert to RGB.
--   Convert pixel values to a float tensor (NCHW).
--   Apply the normalisation expected by the selected pretrained weights
-    (ImageNet mean/std for the default `timm` weights).
-
-Training augmentation:
-
--   Horizontal flip.
--   Small rotations.
--   Brightness and contrast variation.
--   Mild colour variation.
--   Random crop or scale.
--   Background variation.
-
-Do not use augmentations that alter the material's appearance so
-strongly that they create unrealistic training samples.
-
-### 7.5 Confidence and unknown handling
-
-Softmax confidence is not automatically a reliable probability of
-correctness. Evaluate calibration (e.g. temperature scaling) on
-validation data.
-
-A provisional application policy:
-
--   High confidence: show the prediction with a verification reminder.
--   Medium confidence: ask the user to verify the material or provide
-    another image.
--   Low confidence: show "Unable to identify reliably".
--   Non-plastic class wins: show "No plastic detected"; do not force a
-    polymer prediction.
-
-Thresholds must be chosen using validation results, not treated as
-universal values.
+A project timeline should be finalized only after confirming the availability and quality of degradation and pathway datasets.
 
 ---
 
-## 8. Datasets
+## 15. Expected Outcomes
 
-### 8.1 PlasticWaste-DB
+The completed prototype is expected to provide:
 
-Proposed primary dataset: <https://data.mendeley.com/datasets/tvfx5dspf3/1>
-
-Reported class counts:
-
-| Polymer   | Reported images |
-| --------- | --------------: |
-| PET       |             500 |
-| HDPE      |             322 |
-| PVC       |             168 |
-| LDPE      |             440 |
-| PP        |             327 |
-| PS        |             472 |
-| **Total** |       **2,229** |
-
-The reported licence is CC BY 4.0. Before use, verify the current
-dataset version, licence, files, annotation format, and citation
-requirements on the dataset page.
-
-### 8.2 TrashNet
-
-Repository: <https://github.com/garythung/trashnet>
-
-Broad waste categories (glass, paper, cardboard, plastic, metal, trash).
-Useful as the source of **non-plastic** examples; its generic plastic
-class does not distinguish polymers.
-
-### 8.3 TACO -- Trash Annotations in Context
-
-Repository: <https://github.com/pedropro/TACO>
-
-Litter images in real-world environments with annotations. Useful for
-object detection and robustness testing; not a polymer-specific dataset.
-
-### 8.4 Custom dataset
-
-Collect additional images of common plastic items using different
-lighting, backgrounds, distances, orientations, colours, levels of
-dirt or wear, and transparent / translucent / opaque appearances.
-
-Label from the printed resin code, manufacturer markings, or reliable
-product documentation. Do not label an item solely by visual guesswork.
-A clear photo of the resin code is a good way to record the label source.
-
-### 8.5 Dataset split
-
-| Split      | Percentage |
-| ---------- | ---------: |
-| Training   |        70% |
-| Validation |        15% |
-| Testing    |        15% |
-
-Use grouped splitting so near-duplicate images, the same physical item,
-or images from the same capture session do not occur in both training
-and test sets.
+- A structured record of plastic waste items or batches.
+- A predicted plastic category, where supported by the input data.
+- An AI-based degradation estimate tied to a clearly defined target.
+- A condition-aware assessment of reuse and recycling suitability.
+- An optimized recommendation for the next recovery pathway.
+- An explanation of the recommendation and its constraints.
+- Evaluation results showing the performance and limitations of both the prediction model and optimizer.
 
 ---
 
-## 9. Flutter Application Screens
+## 16. Key Research and Development Risks
 
-### Screen 1 -- Home
-
--   Welcome message.
--   Scan plastic button.
--   Upload image button.
--   Recent scans.
--   Collection summary.
--   Daily challenge or learning prompt.
-
-### Screen 2 -- Scanner
-
--   Camera preview.
--   Capture button.
--   Gallery picker.
--   Image preview.
--   Retake and confirm actions.
--   Scanning progress indicator.
-
-### Screen 3 -- Identification Result
-
-Layout follows the reference card: image on top, then a details card.
-
--   Scanned image.
--   Object, Plastic Presence, Plastic Type(s), Confidence rows.
--   Polymer full name and resin code.
--   Uncertainty and verification message.
--   Material description panel (e.g. "PET -- Polyethylene Terephthalate ...").
--   Save scan action.
-
-### Screen 4 -- Material Details
-
--   Material description.
--   Physical properties.
--   Typical applications.
--   Recycling guidance.
--   Local recyclability caveat.
--   Additional materials, if known.
--   Educational fact.
--   Eco tip.
-
-### Screen 5 -- My Collection
-
--   Saved items.
--   Material categories.
--   Collection progress.
--   Achievements.
--   Streaks and points.
-
-### Screen 6 -- Scan History
-
--   Previous scan records.
--   Date and time.
--   Predicted material.
--   Search and filters.
--   View result.
--   Delete record.
-
-### Screen 7 -- Profile and Learning
-
--   User profile.
--   Learning library.
--   Notifications.
--   Settings.
--   Privacy and account controls.
+| Risk | Mitigation |
+|---|---|
+| No suitable degradation dataset | Narrow the target to a measurable property or condition category with defensible data |
+| Image data mistaken for chemical testing | Clearly separate visual indicators from measured material properties |
+| Different studies use incompatible test conditions | Preserve study metadata and use careful harmonization or separate models |
+| Arbitrary reuse thresholds | Derive criteria from standards, expert review, and documented process specifications |
+| Optimizer recommends unavailable facilities | Include facility availability and accepted-material constraints |
+| High uncertainty in predictions | Show uncertainty and request inspection or testing rather than forcing a route |
+| Unverified feedback contaminates training data | Add only reviewed, traceable labels to future training versions |
 
 ---
 
-## 10. Database Design
+## 17. Project Positioning
 
-Use Firestore collections with user-specific access controls.
+**AI-Based Plastic Waste Degradation Prediction for Intelligent Recycling Route Optimization** is an AI-driven decision-support concept that predicts the degradation condition of plastic waste and uses that prediction to select an appropriate reuse or recycling pathway.
 
-| Collection      | Purpose                                 |
-| --------------- | --------------------------------------- |
-| `users`         | User profile and preferences            |
-| `plastic_types` | Polymer names, codes, and properties    |
-| `plastic_items` | Item names and descriptions             |
-| `scans`         | Prediction records and image references |
-| `collections`   | Items saved by users                    |
-| `achievements`  | Achievement definitions and awards      |
-| `user_progress` | Points, streaks, and progress           |
-| `feedback`      | User corrections and feedback           |
+The central idea is to connect **what condition the plastic is in** with **what should happen to it next**. The optimization component makes reuse actionable by directing material that meets defined requirements toward suitable reuse opportunities, while directing other material toward appropriate recycling or recovery processes.
 
-A copy of `plastic_types` is also bundled in the app as JSON so results
-display offline.
-
-### Example scan record
-
-```json
-{
-  "scan_id": "SCAN_001",
-  "user_id": "USER_001",
-  "item_name": "Water Bottle",
-  "contains_plastic": true,
-  "plastic_type": "PET",
-  "resin_code": 1,
-  "confidence": 0.943,
-  "model_version": "mobilenetv3-v1",
-  "llm_used": false,
-  "user_verified": false,
-  "image_path": "scans/USER_001/SCAN_001.jpg",
-  "sync_status": "synced",
-  "created_at": "2026-11-14T10:00:00Z"
-}
-```
-
-The confidence value is an illustrative example, not an actual model result.
-
-### Example material record
-
-```json
-{
-  "material": "PET",
-  "full_name": "Polyethylene Terephthalate",
-  "resin_code": 1,
-  "properties": ["Lightweight", "Transparent", "Good moisture barrier"],
-  "common_items": ["Water bottles", "Soft-drink bottles", "Food trays"],
-  "recycling_guidance": "Check local PET collection facilities",
-  "recyclability_rating": 4
-}
-```
-
-Treat recyclability ratings as contextual information. Acceptance varies
-by location, product design, contamination, and available facilities.
-
-### Security rules
-
--   Require authentication for private user data.
--   Users may read and update only their own profile.
--   Users may read and delete only their own scans.
--   Protect admin-only material and content updates.
--   Validate all submitted fields.
--   Do not store passwords in Firestore.
--   Avoid public access to private scan images.
--   Provide a clear image-retention and deletion policy.
--   Do not trust a user-supplied user ID without verifying the Firebase
-    identity token.
+The project should be presented as a proposed system architecture until its models, data, optimization method, and experimental results have actually been implemented and validated. Any claim of novelty or patentability requires a separate prior-art search and professional assessment.
 
 ---
 
-## 11. FastAPI Backend
+## 18. Short Project Abstract
 
-The app talks to Firestore directly for normal user data. FastAPI exists
-for operations that need a server-side secret or admin privileges.
-
-| Endpoint                   | Method | Purpose                                         |
-| -------------------------- | ------ | ----------------------------------------------- |
-| `/api/health`              | GET    | Health check                                    |
-| `/api/identify/enrich`     | POST   | Send image to vision LLM; return validated JSON |
-| `/api/plastics`            | GET    | List plastic materials (public)                 |
-| `/api/plastics/{id}`       | GET    | Retrieve material details (public)              |
-| `/api/admin/plastics/{id}` | PUT    | Update material record (admin only)             |
-| `/api/feedback`            | POST   | Submit correction feedback                      |
-| `/api/admin/feedback`      | GET    | Review feedback (admin only)                    |
-
-Secure protected endpoints by verifying Firebase ID tokens. Derive the
-user identity from the verified token, not from a request field. Rate-limit
-`/api/identify/enrich` per user to control LLM cost.
+Plastic waste varies in its degradation condition and potential for further use. Conventional sorting based mainly on material category may not adequately account for the condition of individual items or batches when selecting a recovery process. This project proposes an AI-based system that predicts plastic waste degradation using available material, exposure, condition, and measurement data. The predicted condition is combined with polymer type, contamination information, reuse requirements, and recycling-process constraints to assess feasible recovery pathways. An intelligent optimization module then recommends the most suitable next step, with the aim of increasing appropriate reuse and material recovery while considering processing cost, energy, quality, and environmental objectives. The system provides an explainable recommendation and communicates uncertainty when the available evidence is insufficient. Its effectiveness will be evaluated using held-out degradation data and comparisons against baseline pathway-selection strategies.
 
 ---
 
-## 12. On-Device Model Deployment
+## 19. Current Implementation Status
 
-1.  Train and validate the model in PyTorch.
-2.  Save the selected model checkpoint.
-3.  Export to ONNX.
-4.  Verify input shape, preprocessing, output labels, and prediction parity.
-5.  Benchmark the ONNX model on representative Android devices.
-6.  Bundle the model and a `labels.json` file in the Flutter app assets.
-7.  Run inference with the `onnxruntime` Flutter package (fallback:
-    convert to TFLite and use `tflite_flutter`).
-8.  Run inference locally.
-9.  Save the result locally.
-10. Synchronise the record when connectivity is available.
+The project began as **PlasticLens**, a plastic *identification* and
+recycling-guidance app ([earlier specification](documentation/plasticlens_identification_spec.md)).
+That work is complete and becomes the foundation of this system. The table
+maps it onto the architecture in §6. Sections 4.3–4.5, 7.2–7.4, 10.2–10.3
+and the new modules in §12 are **not yet implemented**. Their order and
+"done when" criteria are in [PLAN.md](PLAN.md), Part B.
 
-Keep the model version and class-label mapping together. A model update
-must not silently change the meaning of existing scan records.
+| Component (this README) | Status | Where |
+| --- | --- | --- |
+| §4.1 Input: photograph (camera or gallery) | ✅ Built | `android_app/lib/screens/scanner_screen.dart`, `scan_flow.dart` |
+| §4.1 Input: history, exposure, visible condition, contamination; measured / user-entered / AI-estimated provenance | ⏳ To build | PLAN Section 17 |
+| §4.2 Plastic identification (PET, HDPE, PVC, LDPE, PP, PS + non-plastic) | ✅ Built and evaluated | `ai_model/`, `documentation/model_card.md` |
+| §4.2 Verification of uncertain identifications (resin code, user correction) | ✅ Built | Result screen "Correct material"; `feedback` collection |
+| §4.3 Degradation prediction | ⏳ Blocked on dataset and target decision | PLAN Sections 12–14 |
+| §4.4 Reuse and recycling suitability | ⏳ To build (rule base from documented sources) | PLAN Section 15 |
+| §4.5 / §7.4 Route optimization | ⏳ To build (weighted MCDA baseline vs fixed-rule baseline) | PLAN Section 16 |
+| §12.1, §12.7 Dashboard, History | ✅ Partly (scan history, collection) | PLAN Section 17 extends them to assessments |
+| §12.4–12.6 Degradation, recommendation and optimization screens | ⏳ To build | PLAN Section 17 |
+| §12.8 Admin / data management | ✅ Partly (materials, feedback via API and Firestore rules) | PLAN Section 17 adds pathway rules, facilities and outcomes |
+| API (FastAPI) | ✅ Built (identification second opinion, materials, feedback, admin) | `backend/`, `documentation/api_documentation.md` |
+| Accounts, cloud sync, security rules | ✅ Built and emulator-tested; live project setup pending | `firebase/`, `android_app/lib/services/` |
+| Landing website | ✅ Built (Lighthouse 100); needs repositioning for the new scope | `website/` |
 
-Optional: add YOLOv8n object detection if cluttered scenes require
-object localisation. It is not required for the first version.
+### Identification results achieved so far
 
----
+MobileNetV3-Large, held-out test set of 450 images: **accuracy 0.916,
+macro-F1 0.915**, calibrated (ECE 0.034). Runs offline on Android (ONNX,
+about 0.1 s per scan on the emulator). Full results, limitations and
+robustness scenarios: [documentation/model_card.md](documentation/model_card.md).
 
-## 13. Landing Website
+### Deviations from the suggested stack (§11)
 
-A one-page public website, similar in purpose to the reference page
-(<https://www.sustainabledesign.studio/plasticscanner>), but with original
-branding, text, and images.
-
-Sections:
-
-1.  **Hero** -- full-width ocean/waste background, phone mock-up showing a
-    real PlasticLens result screenshot, headline, short tagline,
-    "Download APK" / "Get it on Google Play" buttons.
-2.  **How it works** -- three steps: Snap → Identify → Recycle.
-3.  **Features** -- offline AI, material info, recycling tips, collection
-    and achievements.
-4.  **Supported plastics** -- cards for PET, HDPE, PVC, LDPE, PP, PS with
-    resin codes.
-5.  **Why it matters** -- short plastic-pollution facts, with sources.
-6.  **Download / CTA** and **footer** (privacy policy, contact, credits).
-
-Requirements: responsive (mobile first), fast-loading, accessible
-(contrast, alt text), hosted on Firebase Hosting. Use only images you own
-or that are licensed for reuse; do not copy the reference site's assets
-or text. Use the official Google Play badge only after the app is
-actually published on Play.
+| Suggested | Used | Reason |
+| --- | --- | --- |
+| PostgreSQL / SQLite | SQLite on the device + Cloud Firestore | Offline-first app, per-user security rules, and a free hosted tier; already built and tested |
+| Streamlit / Flutter dashboard | Flutter | One codebase for the app and the dashboard screens |
+| PyTorch or TensorFlow | PyTorch (+ ONNX Runtime on the device) | |
+| OR-Tools / SciPy | To be chosen in PLAN Section 16 | SciPy for the MCDA baseline; OR-Tools only if a MILP is justified |
 
 ---
 
-## 14. Gamification
-
--   Points for completing a scan.
--   Badges for identifying new material categories.
--   Streaks for regular learning or scanning.
--   Collection completion progress.
--   Educational challenges.
--   Milestones for learning about recycling.
-
-Do not award points for a prediction that the app itself has marked as
-unreliable. Consider rewarding user verification and learning actions
-instead of scan volume alone.
-
----
-
-## 15. Evaluation and Testing
-
-### 15.1 AI metrics
-
-| Metric            | Purpose                              |
-| ----------------- | ------------------------------------ |
-| Accuracy          | Overall classification correctness   |
-| Precision         | Correctness of predicted classes     |
-| Recall            | Coverage of actual class examples    |
-| F1-score          | Balance between precision and recall |
-| Confusion matrix  | Identifies class confusion           |
-| Calibration (ECE) | Checks reliability of confidence     |
-| Inference latency | Measures prediction time             |
-| Model size        | Measures deployment footprint        |
-
-Report per-class precision, recall, F1, and support. Include a separate
-non-plastic evaluation. If the LLM stage is used, also measure its
-agreement with ground truth on a small labelled set.
-
-### 15.2 Image test scenarios
-
--   Transparent bottles.
--   Dark plastics.
--   White containers.
--   Crushed objects.
--   Plastic bags.
--   Multiple objects in one image.
--   Low-light images.
--   Blurred images.
--   Non-plastic objects.
--   Unseen object types and backgrounds.
-
-### 15.3 Application testing
-
--   Camera and gallery permission handling.
--   Invalid image handling.
--   Offline scanning.
--   Cloud synchronisation.
--   Authentication and access control.
--   Scan history persistence.
--   Image deletion.
--   Model loading failures.
--   Low-memory devices.
--   Different Android screen sizes.
-
-### 15.4 Website testing
-
--   Lighthouse score (performance, accessibility, SEO).
--   Layout at phone, tablet, and desktop widths.
--   All download links work.
-
----
-
-## 16. Project Folder Structure
+## 20. Repository Structure
 
 ```text
 plastic-lens/
-|
-|-- android_app/
-|   |-- lib/
-|   |   |-- screens/
-|   |   |-- widgets/
-|   |   |-- services/
-|   |   |-- models/
-|   |   |-- providers/
-|   |   |-- utils/
-|   |   `-- main.dart
-|   |-- assets/
-|   |   |-- models/        # plasticlens.onnx, labels.json
-|   |   |-- data/          # plastic_types.json (offline copy)
-|   |   `-- images/
-|   `-- test/
-|
+|-- android_app/          Flutter app (PlasticLens)
+|   |-- lib/              screens, services, models, widgets
+|   |-- assets/           models/ (ONNX + labels.json), data/ (materials, lessons, badges)
+|   |-- test/, integration_test/
 |-- ai_model/
-|   |-- datasets/          # not committed to Git
-|   |-- preprocessing/
-|   |-- training/
-|   |-- evaluation/
-|   |-- export/
-|   `-- models/
-|
-|-- backend/
-|   |-- app/
-|   |   |-- routers/
-|   |   |-- services/
-|   |   |-- schemas/
-|   |   `-- main.py
-|   `-- tests/
-|
-|-- website/
-|   |-- index.html
-|   |-- css/
-|   |-- js/
-|   `-- assets/
-|
-|-- documentation/
-|   |-- architecture.md
-|   |-- model_card.md
-|   `-- api_documentation.md
-|
-|-- README.md
+|   |-- preprocessing/    identification dataset pipeline
+|   |-- training/ evaluation/ export/
+|   |-- degradation/      (planned) degradation dataset + model, PLAN 12-14
+|   `-- datasets/, models/ (not committed)
+|-- backend/              FastAPI: identification second opinion, materials, feedback, admin
+|   `-- app/decision/     (planned) suitability rules + optimizer, PLAN 15-16
+|-- firebase/             Firestore/Storage rules, rule tests, hosting tooling
+|-- website/              landing page
+|-- documentation/        model card, architecture, API, testing, report
+|-- tools/                icon generation
 |-- PLAN.md
-`-- .gitignore
+`-- README.md
 ```
 
----
+## 21. Setup
 
-## 17. Eight-Week Development Roadmap
+| Tool | Version used |
+| --- | --- |
+| Flutter | 3.50 (`C:\src\flutter`) |
+| Android SDK | platform 36/37, emulator `PlasticLens_Pixel` (SDK via `C:\Android\Sdk`) |
+| Python | 3.11, venv `C:\src\venvs\plasticlens` (`ai_model/requirements.txt`, `backend/requirements.txt`) |
+| Node.js | 24 (`firebase/`: emulator tests, Lighthouse, deploy) |
 
-| Week | Tasks                                                           | Deliverable          |
-| ---: | --------------------------------------------------------------- | -------------------- |
-|    1 | Repo + environment setup, Flutter UI skeleton, navigation       | UI prototype         |
-|    2 | Dataset download, inspection, cleaning, splitting               | Prepared dataset     |
-|    3 | MobileNetV3 fine-tuning and evaluation                          | Trained model        |
-|    4 | ONNX export and Android inference integration                   | Working scanner      |
-|    5 | Firebase auth, Firestore, material database, FastAPI + LLM      | Connected backend    |
-|    6 | Scan history, collection, material details                      | Core application     |
-|    7 | Achievements, streaks, learning, notifications, landing website | Complete feature set |
-|    8 | Testing, security review, performance, APK build, report        | Release candidate    |
+Quick checks:
 
-This is a target schedule, not a guarantee. The section-by-section
-breakdown is in [PLAN.md](PLAN.md).
+```powershell
+cd android_app; flutter test                    # 32 tests
+cd ..\backend;  pytest                          # 21 tests
+cd ..\firebase; npm run test:rules              # 9 tests (needs Java 21)
+```
 
----
+Reproducing the identification model: see the appendix of
+[documentation/capstone_report.md](documentation/capstone_report.md).
 
-## 18. Development Environment Setup
+## 22. Datasets in Use
 
-| Software         | Purpose                          |
-| ---------------- | -------------------------------- |
-| Android Studio   | Android SDK and emulator         |
-| Flutter SDK      | Mobile app framework             |
-| VS Code          | Code editor                      |
-| Python 3.11      | AI and backend development       |
-| PyTorch + timm   | Model training                   |
-| Google Colab     | GPU-based experimentation        |
-| Firebase CLI     | Firebase project and hosting     |
-| Git              | Version control                  |
-| Postman          | API testing                      |
+| Dataset | Use | Licence |
+| --- | --- | --- |
+| PlasticWaste-DB v1 (Mendeley `tvfx5dspf3`) | Polymer identification (6 classes) | CC BY 4.0 |
+| TrashNet | Non-plastic class | MIT |
+| *Degradation dataset* | §4.3. **Not yet selected.** See §9 and PLAN Section 12 | to be verified |
+| *Pathway / facility data* | §4.4–4.5. **Not yet collected.** See PLAN Section 15 | to be verified |
 
-Official documentation:
+## 23. Completion Criteria
 
--   Flutter: <https://docs.flutter.dev/>
--   Android Studio: <https://developer.android.com/studio>
--   PyTorch: <https://pytorch.org/>
--   timm: <https://huggingface.co/docs/timm>
--   ONNX Runtime Mobile: <https://onnxruntime.ai/docs/tutorials/mobile/>
--   Firebase Flutter setup: <https://firebase.google.com/docs/flutter/setup>
--   FastAPI: <https://fastapi.tiangolo.com/>
--   PlasticWaste-DB: <https://data.mendeley.com/datasets/tvfx5dspf3/1>
--   TrashNet: <https://github.com/garythung/trashnet>
--   TACO: <https://github.com/pedropro/TACO>
+Foundation (identification app):
 
----
+- [x] A user can capture or upload an image.
+- [x] The app identifies the likely polymer on Android, offline, with calibrated confidence.
+- [x] Uncertain and non-plastic inputs are handled safely.
+- [x] AI identification results and model version are documented.
+- [ ] A user can register and sign in. *(implemented; needs the live Firebase setup)*
+- [ ] Cloud synchronisation works when connectivity returns. *(tested against a fake Firestore; needs a live check)*
+- [ ] The landing website is live. *(built; deploy needs `firebase login`)*
+- [ ] The application has been tested on physical Android devices.
 
-## 19. Risks and Mitigation
+Degradation and route optimization (this README):
 
-| Risk                           | Mitigation                                                |
-| ------------------------------ | --------------------------------------------------------- |
-| Similar-looking polymers       | Collect verified labels and evaluate class confusion      |
-| Small dataset                  | Add carefully labelled custom images; weighted loss       |
-| Transparent or dark objects    | Include dedicated examples and test conditions            |
-| Non-plastic input              | Train a non-plastic class                                 |
-| Misleading confidence          | Calibrate and communicate uncertainty                     |
-| LLM hallucination              | Strict JSON schema, validation, show as "second opinion"  |
-| LLM cost / API key leak        | Key only on server; per-user rate limits                  |
-| Incorrect recycling advice     | Use reviewed, location-aware guidance                     |
-| Offline/cloud conflicts        | Use stable scan IDs and sync status                       |
-| Model updates changing labels  | Version models and preserve label mappings                |
-| Privacy concerns               | Minimise image retention and enforce access controls      |
-| Flutter ONNX plugin problems   | Fallback to TFLite (`tflite_flutter`)                     |
-
----
-
-## 20. Final Technical Specification
-
-| Component            | Selected technology                     |
-| -------------------- | --------------------------------------- |
-| Platform             | Android                                 |
-| Frontend             | Flutter and Dart                        |
-| AI framework         | PyTorch + timm                          |
-| Primary model        | MobileNetV3-Large (6 polymers + non-plastic) |
-| Optional detector    | YOLOv8n                                 |
-| Optional cloud AI    | Vision LLM via FastAPI                  |
-| Model deployment     | ONNX Runtime Mobile                     |
-| Backend              | Python and FastAPI                      |
-| Database             | Firebase Firestore                      |
-| Authentication       | Firebase Authentication                 |
-| Storage              | Firebase Storage                        |
-| Website              | Static HTML/CSS/JS on Firebase Hosting  |
-| Training environment | Google Colab or local GPU               |
-| Inference            | On-device, offline-capable              |
-| Target timeline      | 8 weeks                                 |
-
----
-
-## 21. Project Completion Criteria
-
--   [ ] A user can register and sign in. *(implemented and tested against the emulator; needs `google-services.json` and the sign-in providers enabled)*
--   [x] A user can capture or upload an image.
--   [x] The app can run the AI model on Android, offline (airplane-mode integration test).
--   [x] The app displays object, plastic presence, material, and confidence.
--   [x] Uncertain and non-plastic inputs are handled safely.
--   [x] The result page displays material information and recycling guidance.
--   [x] Users can save and view scans.
--   [x] Users can manage their collection.
--   [x] Achievements and progress work correctly (scripted test).
--   [x] User data is protected by access controls (rules tested in the emulator; deploy pending).
--   [ ] Cloud synchronisation works when connectivity returns. *(passes against a fake Firestore; needs a live check)*
--   [x] AI evaluation results and model version are documented (`documentation/model_card.md`).
--   [ ] The landing website is live and links to the app. *(built, Lighthouse 100; deploy needs `firebase login`)*
--   [ ] The application has been tested on physical Android devices. *(needs your phones)*
-
----
-
-## 22. Reference and Originality Note
-
-PlasticLens is an independent project inspired by publicly described
-Plastic Scanner functionality. It is not affiliated with or endorsed by
-Sustainable Design Studio.
-
-Use independently created UI designs, branding, source code, images, and
-educational content. Review the licence and attribution requirements for
-every dataset, model, image, and third-party library used.
-
-The internal architecture and AI model of the reference application are
-not known. The stack above is a recommendation for building a similar
-application, not a claim about the original implementation.
+- [ ] The degradation target, units, measurement method and dataset are documented (§4.3, §9).
+- [ ] The degradation model is evaluated on held-out data with the §10.2 metrics, per polymer and condition where possible.
+- [ ] Pathway rules come from cited technical sources, and unsafe or unsupported pathways are excluded (§4.4, §7.3).
+- [ ] The optimizer is compared with a fixed-rule baseline, and constraint violations and sensitivity are reported (§10.3).
+- [ ] The app records item or batch evidence with its provenance (measured, user-entered or AI-estimated) and shows the recommendation, alternatives, reasons and uncertainty (§12, §13).
+- [ ] Outcomes can be recorded and reviewed before they are used for retraining (§5 step 9, §16).

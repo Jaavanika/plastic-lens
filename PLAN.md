@@ -1,23 +1,35 @@
-# PlasticLens -- Implementation Plan
+# Implementation Plan -- AI-Based Plastic Waste Degradation Prediction for Intelligent Recycling Route Optimization
 
-This plan splits the project into sections that are implemented **one at a
-time, in order**. Each section has a goal, tasks, deliverables, and a
-"Done when" checklist. Do not start a section until the previous one's
-"Done when" list is complete (except where marked *parallel*).
+Prototype name: **PlasticLens**. Project definition: [README.md](README.md).
 
-Full technical details are in
-[README.md](README.md).
+The plan has two parts:
+
+- **Part A (Sections 0–11), the foundation: complete.** Polymer identification
+  model, Android app, cloud layer, backend and website. Its original
+  specification is in [documentation/plasticlens_identification_spec.md](documentation/plasticlens_identification_spec.md).
+- **Part B (Sections 12–18), the new scope from the README of 17 Nov 2026.**
+  Degradation prediction, suitability assessment and recovery-route
+  optimization, following the README's roadmap (§14, Phases 1–7).
+
+Each section has a goal, tasks, deliverables, and a "Done when" checklist.
+Sections are implemented **in order**; do not start a section until the
+previous one's "Done when" list is complete (except where marked *parallel*).
+**Section 12 is a decision gate:** nothing after it can be designed
+responsibly until the degradation target and dataset are fixed.
 
 ## Project Decisions
 
 | Decision          | Choice                                                                 |
 | ----------------- | ---------------------------------------------------------------------- |
-| Deliverables      | Android app **and** landing website                                    |
+| Deliverables      | Android app **and** landing website; Part B adds a decision-support module |
 | Team              | Solo developer                                                         |
-| Training hardware | Google Colab (free GPU); local CPU only for quick tests                |
+| Training hardware | Local CPU (identification model trained in ~45 min); Colab notebook optional |
 | App framework     | Flutter (one codebase, good camera/ONNX/Firebase plugins)              |
 | Cloud             | Firebase free tier (Auth, Firestore, Storage, Hosting)                 |
-| Identification    | Trained on-device model = core; vision LLM = optional extra            |
+| Identification    | Trained on-device model = core; vision LLM = optional extra (identification spec §4.2) |
+| Degradation model | **Not chosen yet**: decided after the data review in Section 12 (identification spec §7.2) |
+| Optimizer         | Transparent weighted MCDA first, compared with a fixed-rule baseline; LP/MILP only if justified (identification spec §7.4) |
+| Decision engine   | Python package in `backend/` (FastAPI), so rules, model and optimizer are testable with pytest |
 
 Because this is a solo project, sections are tagged by priority:
 
@@ -40,6 +52,16 @@ Because this is a solo project, sections are tagged by priority:
 |  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
 | 10 | Landing website                         |    7 | 5          | Core     | Done (deploy needs your login) |
 | 11 | Testing, hardening, release, report     |    8 | all        | Core     | Mostly done; phone tests + video need you |
+| 12 | Problem definition and data review (decision gate) | TBD | 11 | Core | Not started: needs you + supervisor |
+| 13 | Degradation dataset preparation         |  TBD | 12         | Core     | Not started |
+| 14 | Baseline degradation model              |  TBD | 13         | Core     | Not started |
+| 15 | Pathway knowledge base and suitability rules | TBD | 12   | Core     | Not started (can run *parallel* with 13–14) |
+| 16 | Route optimization engine               |  TBD | 14, 15     | Core (MILP is Stretch) | Not started |
+| 17 | App and API integration                 |  TBD | 16         | Core     | Not started |
+| 18 | Testing, final evaluation, repositioning |  TBD | all       | Core     | Not started |
+
+Weeks for Part B are TBD: the README asks for the timeline to be fixed only after
+the degradation and pathway data are confirmed (§14).
 
 Sections 1 and 2 can run in parallel: while the model trains on Colab,
 work on the Flutter UI. Section 10 can start any time after the result
@@ -58,7 +80,7 @@ Tasks:
 
 Project location: `C:\dev\plastic-lens` (kept outside OneDrive to avoid sync/lock problems).
 
-- [x] Create the folder structure from README §16.
+- [x] Create the folder structure from identification spec §16.
 - [x] `git init`, add `.gitignore` (Python, Flutter, `datasets/`, model weights, `.env`, `google-services.json`).
 - [x] Create a GitHub repository and push (https://github.com/Jaavanika/plastic-lens).
 - [x] Install Flutter SDK at `C:\src\flutter` (3.50.0, on user PATH).
@@ -214,7 +236,7 @@ Tasks:
 - [x] Email/password and Google sign-in; sign-out; first-launch sign-in screen with "continue without an account".
 - [x] Create `users` document on first sign-in.
 - [x] Upload `plastic_types` to Firestore (`backend/scripts/seed_firestore.py`). **Run it with your service-account key.**
-- [x] Write Firestore + Storage security rules (README §10); tested with the Firebase emulator (`firebase/`, `npm run test:rules`, 9 tests pass).
+- [x] Write Firestore + Storage security rules (identification spec §10); tested with the Firebase emulator (`firebase/`, `npm run test:rules`, 9 tests pass).
 - [x] Account deletion (deletes scans, progress, profile, Storage images, then the auth user).
 - [ ] Connect the real project: add `android/app/google-services.json`, enable Email/Password + Google providers, create Firestore + Storage, deploy rules. **Needs your Firebase login.**
 
@@ -319,8 +341,8 @@ Done when:
 
 Tasks:
 
-- [x] Run image test scenarios (README §15.2): simulated on the test set with the shipped model + policy (`evaluation/scenarios.py`, model card §6). *Real-photo scenarios: do on your phone.*
-- [x] Application tests (README §15.3); `flutter test` widget tests: 32 Flutter + 1 on-device + 9 rules + 21 backend tests passing; matrix in `documentation/testing.md`.
+- [x] Run image test scenarios (identification spec §15.2): simulated on the test set with the shipped model + policy (`evaluation/scenarios.py`, model card §6). *Real-photo scenarios: do on your phone.*
+- [x] Application tests (identification spec §15.3); `flutter test` widget tests: 32 Flutter + 1 on-device + 9 rules + 21 backend tests passing; matrix in `documentation/testing.md`.
 - [ ] Test on at least 2 physical Android devices. **Needs your phones.**
 - [x] Security review: rules (emulator tests), token checks (backend tests), no secrets in the release APK or git history (scanned).
 - [x] Build signed release APK: arm64 50 MB, armv7 44 MB, x86_64 54 MB, universal 112 MB; keystore in `C:\dev\keys\` (**back it up**).
@@ -331,11 +353,208 @@ Deliverables: signed APK, documentation, report.
 
 Done when:
 
-- [ ] All boxes in README §21 "Project Completion Criteria" are ticked.
+- [ ] All boxes in identification spec §21 "Project Completion Criteria" are ticked.
+
 
 ---
 
-## Your remaining steps (cannot be done without your accounts or devices)
+# Part B -- Degradation Prediction and Recovery Route Optimization
+
+Part B implements the scope added by the README of 17 Nov 2026 (§4.3–4.5, §7.2–7.4, §10.2–10.3, §12–13).
+It follows the README's roadmap (§14, Phases 1–7). Sections 0–11 above
+(Part A) are the completed foundation: the polymer identification model, the
+app, the cloud layer and the website.
+
+Ground rules from the README that apply to every Part B section:
+
+- **Do not choose a degradation model before the dataset is inspected** (§7.2). Section 12 is a decision gate.
+- **No invented degradation score.** The target, units, measurement method and prediction horizon must be documented (§4.3).
+- **Separate evidence types.** Keep measured values, user-entered information and AI estimates apart everywhere (§4.1).
+- **No safety-critical reuse from AI alone.** Food-contact, medical and structural reuse is never recommended on the strength of a prediction (§4.4).
+- **Rules need sources.** Pathway thresholds come from standards, process specifications or expert review, never arbitrary numbers (§7.3, §16).
+- **Claims need a baseline.** Any claim that the optimizer improves on simple sorting must be measured against a fixed-rule baseline (§10.3).
+- **The test set stays held out.** It is not used for model or threshold selection (§9).
+
+---
+
+## Section 12 -- Problem Definition and Data Review *(decision gate; README Phase 1)*
+
+**Goal:** Decide exactly what "degradation" means in this project, and which data will teach it, before any model is chosen.
+
+Tasks:
+
+- [ ] Survey candidate degradation data (README §9): weathering and accelerated-ageing studies with supplementary data, open materials-science repositories, and polymer degradation studies with before/after measurements. Log each source in `documentation/degradation_data_review.md` with: licence, polymers, exposure variables (UV dose or hours, temperature, humidity, outdoor duration), measured property, units, test method, sample count and study ID.
+- [ ] Choose **one** target (§4.3), for example:
+  - a measured property such as tensile-strength retention, elongation-at-break retention or carbonyl index (regression); or
+  - a condition category (low / moderate / high) with a written, reproducible labelling rule (classification).
+- [ ] Write down the units, measurement method and prediction horizon (e.g. "after N hours of exposure" or "current state").
+- [ ] List the features that are **genuinely available in the app at prediction time** (polymer, approximate age, sunlight/heat/moisture exposure, visible cracks, discoloration, brittleness, deformation, contamination), separately from features that only exist in lab data. The model may only use the first group, or the gap must be bridged and documented.
+- [ ] Decide the role of the photo for degradation:
+  - none;
+  - a user-confirmed visual checklist; or
+  - an image condition classifier, only if labelled condition images exist.
+- [ ] Define the pathway categories (README §4.4) and the evaluation criteria (§10.2–10.3) that Sections 14–16 will use.
+
+Deliverables: `documentation/degradation_data_review.md`, a target-definition note, the feature list, and a go / narrow-scope decision.
+
+Done when:
+
+- [ ] Target variable, units, method and horizon are documented.
+- [ ] At least one dataset with a verified licence and enough samples is chosen, **or** a narrowed target with defensible data is agreed (README §16, first risk).
+- [ ] Your supervisor has agreed with the target definition. **Needs you.**
+
+---
+
+## Section 13 -- Degradation Dataset Preparation *(README Phase 2)*
+
+**Goal:** A clean, documented, leakage-resistant degradation dataset.
+
+Tasks:
+
+- [ ] `ai_model/degradation/` scripts that build the dataset from the sources chosen in Section 12. When values are transcribed from papers, cite the source table on every row.
+- [ ] Remove duplicates and invalid records; standardise units and category values.
+- [ ] Keep study, specimen and sample identifiers. Do not merge incompatible experiments without documenting the differences in polymer grade, specimen preparation, exposure and protocol (README §9).
+- [ ] Handle missing values transparently (report the missingness per feature; impute only with a stated method).
+- [ ] Analyse the target distribution and class imbalance, per polymer and per exposure condition.
+- [ ] Grouped train / validation / test split **by study or sample**, so that no experiment appears in two splits. The test set is held out.
+- [ ] Write a dataset card in `documentation/model_card.md` (new "Degradation model" part): provenance, preprocessing and statistics.
+
+Deliverables: processed dataset, split manifest, dataset card.
+
+Done when:
+
+- [ ] The pipeline is reproducible from raw sources with one command.
+- [ ] No study or sample identifier crosses splits (automatic check).
+
+---
+
+## Section 14 -- Baseline Degradation Model *(README Phase 3)*
+
+**Goal:** A measured, honest baseline for the chosen target.
+
+Tasks:
+
+- [ ] A naive baseline first: a per-polymer mean, or a polymer × exposure lookup.
+- [ ] Tabular models: Random Forest and gradient boosting (XGBoost or LightGBM) (README §7.2). Use regression or classification to match the Section 12 target.
+- [ ] Image or multi-input model **only** if Section 12 found labelled condition images.
+- [ ] Metrics (README §10.2): MAE, RMSE and R² (regression) or accuracy, precision, recall, F1, confusion matrix and per-class recall (classification). Report them per polymer and per exposure condition where the data allows.
+- [ ] Uncertainty: prediction intervals (quantile models or conformal prediction) or calibrated probabilities, so that the app can say "inspect / test" instead of forcing a route.
+- [ ] Factor analysis (README objective 3): permutation importance or SHAP for UV, temperature, moisture, age, stress and contamination, where these are present.
+- [ ] Choose how the model is served: in the backend (simplest), or exported (e.g. ONNX via `skl2onnx`) for offline use.
+
+Deliverables: a trained model, a metrics report, an uncertainty method, and the degradation section of the model card.
+
+Done when:
+
+- [ ] Held-out test results are recorded against the naive baseline, even if the model does not beat it.
+- [ ] Uncertainty is quantified and its limitations documented.
+
+---
+
+## Section 15 -- Pathway Knowledge Base and Suitability Rules *(README Phase 4)*
+
+**Goal:** For any assessed item, a sourced list of which recovery pathways are feasible, and why the others are not.
+
+Tasks:
+
+- [ ] Pathway catalogue (`backend/app/decision/pathways.yaml`): direct reuse, cleaning and preparation for reuse, mechanical recycling, specialised recycling or treatment, energy recovery or disposal. Each entry has the README §7.3 fields: accepted polymers, permitted condition range or property requirements, contamination limits, required pre-processing, facility, expected output and quality, and cost/energy data where available. Every value carries a **source citation**.
+- [ ] Local facility list (your city or campus): accepted materials and processes. **Needs you** to collect it (phone calls or council websites).
+- [ ] Feasibility checker: input (polymer + verification status, predicted condition + uncertainty, contamination, intended next use); output: feasible / infeasible / needs inspection, each with reasons.
+- [ ] Hard exclusions:
+  - [ ] Food-contact, medical, structural and other safety-critical reuse is never recommended from AI output alone (README §4.4).
+  - [ ] An unverified polymer leads to a "verify material first" step.
+  - [ ] High degradation uncertainty leads to an "inspect or test" step instead of a forced route (README §16).
+  - [ ] Pathways without an available facility are marked unavailable (README §16).
+- [ ] A unit test for every rule, plus a randomised test showing that no unsafe pathway can ever be returned as feasible.
+
+Deliverables: the pathway catalogue with sources, the checker, and tests.
+
+Done when:
+
+- [ ] Every rule cites a source.
+- [ ] Tests prove every exclusion holds.
+
+---
+
+## Section 16 -- Route Optimization Engine *(README Phase 5)*
+
+**Goal:** Rank the feasible pathways transparently, and show what that gains over a fixed rule.
+
+Tasks:
+
+- [ ] **Fixed-rule baseline**: polymer → a default pathway (today's practice).
+- [ ] **Weighted multi-criteria decision analysis** over the feasible pathways (weighted sum, plus TOPSIS for comparison), with configurable weights for recovery, material quality, cost, energy and disposal avoided (README §7.4).
+- [ ] Uncertainty-aware scoring: compute the expected score over the predicted condition distribution, or fall back to inspection when the ranking flips within the uncertainty.
+- [ ] An explanation object: recommended pathway, alternatives, the deciding factors, and the reason each excluded pathway was excluded.
+- [ ] *(Stretch)* LP / MILP batch allocation with facility capacities (OR-Tools), only if the data justifies it.
+- [ ] API: `POST /api/assess` (evidence → condition estimate + recommendation + explanation).
+- [ ] Evaluation (README §10.3) on a scenario set:
+  - constraint violations, which must be **0**;
+  - agreement with expert-labelled pathways (a small set labelled by you or your supervisor; **needs you**);
+  - sensitivity to the weights and to degradation uncertainty;
+  - share of material sent to reuse or recycling versus disposal, compared with the baseline.
+
+Deliverables: the optimizer, the baseline, the evaluation report and the API endpoint.
+
+Done when:
+
+- [ ] Zero feasibility violations on the scenario set.
+- [ ] Optimizer versus fixed-rule baseline is reported, with a sensitivity analysis.
+- [ ] No environmental or economic claim is made without a measured baseline.
+
+---
+
+## Section 17 -- App and API Integration *(README Phase 6)*
+
+**Goal:** The README §12 modules in the PlasticLens app.
+
+Tasks:
+
+- [ ] **Add waste item or batch** form, starting from a scan or entered by hand. Fields:
+  - polymer, with verification status;
+  - age and usage history;
+  - exposure: sunlight, heat, moisture, outdoor storage;
+  - visible condition checklist: cracks, discoloration, brittleness, deformation, surface damage;
+  - contamination;
+  - optional measured properties.
+- [ ] A **provenance flag on every value** (measured / user-entered / AI-estimated), stored, synced and shown (README §4.1).
+- [ ] **Degradation assessment** screen: the target value or category, units, uncertainty and key factors.
+- [ ] **Recommendation / optimization result** screen, following the README §13 layout: next step, alternatives with status, reasons, uncertainty, and the "not a laboratory certification" note.
+- [ ] Objective-weight settings (simple presets plus advanced sliders).
+- [ ] **Dashboard** and **History** extended from scans to assessments and decisions.
+- [ ] **Admin / data management**: pathway rules, facilities and outcome records (Firestore collections and API), with security rules and emulator tests.
+- [ ] **Outcome recording** (README §5 step 9): what actually happened to an item, with a review status. Only reviewed outcomes may feed retraining (README §16).
+- [ ] Decide and document what works offline (identification, the checklist and possibly the rule check) versus what needs the API.
+
+Deliverables: the new screens and endpoints, with tests.
+
+Done when:
+
+- [ ] Scan → evidence → assessment → recommendation → outcome works end to end on the emulator.
+- [ ] Widget tests and security-rule tests cover the new data.
+
+---
+
+## Section 18 -- Testing, Final Evaluation and Repositioning *(README Phase 7)*
+
+**Goal:** A validated prototype and documentation that match the new scope.
+
+Tasks:
+
+- [ ] Test missing, noisy and uncertain inputs, and infeasible pathway scenarios (README §14 Phase 7).
+- [ ] Final held-out evaluation of the degradation model, and the optimizer evaluation.
+- [ ] Update `model_card.md` (degradation part), `architecture.md`, `api_documentation.md` and `testing.md`.
+- [ ] Rewrite `capstone_report.md` for the new title and abstract (README §18), and present unimplemented parts as proposed architecture (README §17).
+- [ ] Reposition the website copy (identification → assessment and recommendation).
+- [ ] Physical-device tests (carried over from Section 11). **Needs your phones.**
+
+Done when:
+
+- [ ] All README §23 completion criteria are ticked.
+
+---
+
+## Your remaining steps for Part A (cannot be done without your accounts or devices)
 
 1. **Back up** `C:\dev\keys\` (keystore + `key.properties.backup`) somewhere safe, e.g. a USB drive or a password manager. Losing it means you can never update the app.
 2. **GitHub release**: github.com/Jaavanika/plastic-lens → Releases → *Draft a new release* → tag `v1.0.0` → attach the APKs from `C:\dev\plastic-lens-release\` → paste `RELEASE_NOTES.md` → Publish. The website's download button points here.

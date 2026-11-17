@@ -65,7 +65,7 @@ architectures such as MobileNetV3 trade a little accuracy for low latency and
 small size. Vision LLMs can name objects and read printed codes, but they need
 a network connection, cost money per call and are hard to measure.
 PlasticLens therefore uses a trained on-device model as the core and an LLM
-only as an optional second opinion (README §6).
+only as an optional second opinion (identification spec §6).
 
 ## 3. System design
 
@@ -123,7 +123,7 @@ with PS (small white fragments).
 The policy works as intended: confident answers are almost always right, and
 the cases the app asks the user to check really are uncertain.
 
-### 6.3 Robustness (README §15.2)
+### 6.3 Robustness (identification spec §15.2)
 
 With degraded images (low light, blur, compression, rotation), results mostly
 move into the *unsure* states rather than becoming confident errors. Even at

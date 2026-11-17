@@ -1,4 +1,4 @@
-"""Image test scenarios (README §15.2) on the held-out test images.
+"""Image test scenarios (identification spec §15.2) on the held-out test images.
 
 Each scenario transforms the test images, or selects a subset of them, and
 reports accuracy plus how the app's threshold policy reacts. A robust app

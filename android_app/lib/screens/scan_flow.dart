@@ -172,7 +172,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 }
 
-/// Merge the online check into a scan (README §6): it names the object,
+/// Merge the online check into a scan (identification spec §6): it names the object,
 /// and a printed resin code beats the classifier; disagreements are shown.
 void applySecondOpinion(ScanRecord scan, EnrichResult r, MaterialRepository materials) {
   scan

@@ -1,5 +1,5 @@
 """Firebase ID-token verification. The user id always comes from the
-verified token, never from a request field (README §11)."""
+verified token, never from a request field (identification spec §11)."""
 
 from __future__ import annotations
 

@@ -8,7 +8,7 @@ Polymer = Literal["PET", "HDPE", "PVC", "LDPE", "PP", "PS"]
 
 
 class EnrichResult(BaseModel):
-    """Validated vision-LLM output returned to the app (README §6).
+    """Validated vision-LLM output returned to the app (identification spec §6).
 
     Strict: no coercion ("yes" is not a bool, "5" is not an int)."""
 

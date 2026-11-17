@@ -14,7 +14,7 @@ Last full run: 14 November 2026. Device: Pixel 7 emulator, Android 36 (x86_64).
 | Model: test-set evaluation and scenarios | `evaluate.py`, `scenarios.py` | see `model_card.md` |
 | Static analysis | `flutter analyze` | no issues |
 
-## README §15.3 application tests
+## identification spec §15.3 application tests
 
 | Requirement | How it was tested | Result |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ Last full run: 14 November 2026. Device: Pixel 7 emulator, Android 36 (x86_64).
 | Low-memory devices | Preprocessing runs in an isolate; photos capped at 2000 px by the picker and 720p by the camera; model loaded once (17 MB) | ⏳ needs a low-end phone |
 | Different Android screen sizes | Widget tests at phone size; emulator portrait and landscape (no crash, layout scrolls) | ✅ emulator · ⏳ tablet / small phone |
 
-## README §15.4 website tests
+## identification spec §15.4 website tests
 
 | Requirement | Result |
 | --- | --- |
@@ -50,5 +50,5 @@ Last full run: 14 November 2026. Device: Pixel 7 emulator, Android 36 (x86_64).
 
 - [ ] Install the arm64 release APK on 2 phones; scan real items (one per polymer plus non-plastic).
 - [ ] Record per-scan latency (Profile → About shows the last scan's time).
-- [ ] Photograph the README §15.2 scenarios (crushed bottle, bag, dark container, white tub, several items, low light, blur) and note the results here.
+- [ ] Photograph the identification spec §15.2 scenarios (crushed bottle, bag, dark container, white tub, several items, low light, blur) and note the results here.
 - [ ] With Firebase connected: sign up, scan offline, reconnect, and check Firestore; delete the account.

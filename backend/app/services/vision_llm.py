@@ -1,4 +1,4 @@
-"""Vision-LLM "second opinion" via the Anthropic API (README §6, §11).
+"""Vision-LLM "second opinion" via the Anthropic API (identification spec §6, §11).
 
 The API key is read by the SDK from ANTHROPIC_API_KEY on the server; it is
 never sent to, or stored in, the Android app. Images are passed in memory
