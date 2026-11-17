@@ -526,8 +526,8 @@ and the new modules in §12 are **not yet implemented**. Their order and
 | §4.1 Input: history, exposure, visible condition, contamination; measured / user-entered / AI-estimated provenance | ⏳ To build | PLAN Section 17 |
 | §4.2 Plastic identification (PET, HDPE, PVC, LDPE, PP, PS + non-plastic) | ✅ Built and evaluated | `ai_model/`, `documentation/model_card.md` |
 | §4.2 Verification of uncertain identifications (resin code, user correction) | ✅ Built | Result screen "Correct material"; `feedback` collection |
-| §4.3 Degradation prediction | ⏳ Blocked on dataset and target decision | PLAN Sections 12–14 |
-| §4.4 Reuse and recycling suitability | ⏳ To build (rule base from documented sources) | PLAN Section 15 |
+| §4.3 Degradation prediction | ⏳ Data review done; target (elongation-at-break retention vs UV dose) awaits supervisor; provisional curve library for PP/HDPE | `documentation/degradation_data_review.md`, `ai_model/degradation/` |
+| §4.4 Reuse and recycling suitability | 🟡 Checker and safety exclusions built and exhaustively tested; sourced requirement values and local facilities still needed | `backend/app/decision/` |
 | §4.5 / §7.4 Route optimization | ⏳ To build (weighted MCDA baseline vs fixed-rule baseline) | PLAN Section 16 |
 | §12.1, §12.7 Dashboard, History | ✅ Partly (scan history, collection) | PLAN Section 17 extends them to assessments |
 | §12.4–12.6 Degradation, recommendation and optimization screens | ⏳ To build | PLAN Section 17 |

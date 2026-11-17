@@ -52,10 +52,10 @@ Because this is a solo project, sections are tagged by priority:
 |  9 | Gamification and learning               |    7 | 8          | Stretch (points + badges only are Core) | Done (FCM optional skipped) |
 | 10 | Landing website                         |    7 | 5          | Core     | Done (deploy needs your login) |
 | 11 | Testing, hardening, release, report     |    8 | all        | Core     | Mostly done; phone tests + video need you |
-| 12 | Problem definition and data review (decision gate) | TBD | 11 | Core | Not started: needs you + supervisor |
-| 13 | Degradation dataset preparation         |  TBD | 12         | Core     | Not started |
+| 12 | Problem definition and data review (decision gate) | TBD | 11 | Core | In progress: review drafted; target awaits supervisor |
+| 13 | Degradation dataset preparation         |  TBD | 12         | Core     | Started provisionally (S1 curves) |
 | 14 | Baseline degradation model              |  TBD | 13         | Core     | Not started |
-| 15 | Pathway knowledge base and suitability rules | TBD | 12   | Core     | Not started (can run *parallel* with 13–14) |
+| 15 | Pathway knowledge base and suitability rules | TBD | 12   | Core     | In progress: checker + exclusions done; sourced values + facilities needed |
 | 16 | Route optimization engine               |  TBD | 14, 15     | Core (MILP is Stretch) | Not started |
 | 17 | App and API integration                 |  TBD | 16         | Core     | Not started |
 | 18 | Testing, final evaluation, repositioning |  TBD | all       | Core     | Not started |
@@ -383,17 +383,17 @@ Ground rules from the README that apply to every Part B section:
 
 Tasks:
 
-- [ ] Survey candidate degradation data (README §9): weathering and accelerated-ageing studies with supplementary data, open materials-science repositories, and polymer degradation studies with before/after measurements. Log each source in `documentation/degradation_data_review.md` with: licence, polymers, exposure variables (UV dose or hours, temperature, humidity, outdoor duration), measured property, units, test method, sample count and study ID.
-- [ ] Choose **one** target (§4.3), for example:
+- [x] Survey candidate degradation data (README §9), done 17 Nov 2026 in `documentation/degradation_data_review.md` (6 source groups; no item-level dataset exists): weathering and accelerated-ageing studies with supplementary data, open materials-science repositories, and polymer degradation studies with before/after measurements. Log each source in `documentation/degradation_data_review.md` with: licence, polymers, exposure variables (UV dose or hours, temperature, humidity, outdoor duration), measured property, units, test method, sample count and study ID.
+- [ ] Choose **one** target (§4.3). **Proposed: Option A**, elongation-at-break retention vs cumulative UV dose, with an honest range; awaiting supervisor. Examples:
   - a measured property such as tensile-strength retention, elongation-at-break retention or carbonyl index (regression); or
   - a condition category (low / moderate / high) with a written, reproducible labelling rule (classification).
-- [ ] Write down the units, measurement method and prediction horizon (e.g. "after N hours of exposure" or "current state").
-- [ ] List the features that are **genuinely available in the app at prediction time** (polymer, approximate age, sunlight/heat/moisture exposure, visible cracks, discoloration, brittleness, deformation, contamination), separately from features that only exist in lab data. The model may only use the first group, or the gap must be bridged and documented.
-- [ ] Decide the role of the photo for degradation:
+- [x] *(proposed, see review §3)* Write down the units, measurement method and prediction horizon (e.g. "after N hours of exposure" or "current state").
+- [x] List the features that are **genuinely available in the app at prediction time** (review §4) (polymer, approximate age, sunlight/heat/moisture exposure, visible cracks, discoloration, brittleness, deformation, contamination), separately from features that only exist in lab data. The model may only use the first group, or the gap must be bridged and documented.
+- [x] Decide the role of the photo for degradation: **proposed: none** (identification only; no labelled data); visible damage becomes user-entered evidence for the rules.
   - none;
   - a user-confirmed visual checklist; or
   - an image condition classifier, only if labelled condition images exist.
-- [ ] Define the pathway categories (README §4.4) and the evaluation criteria (§10.2–10.3) that Sections 14–16 will use.
+- [x] Define the pathway categories (README §4.4) (review §5); evaluation criteria (§10.2–10.3) that Sections 14–16 will use.
 
 Deliverables: `documentation/degradation_data_review.md`, a target-definition note, the feature list, and a go / narrow-scope decision.
 
@@ -411,7 +411,7 @@ Done when:
 
 Tasks:
 
-- [ ] `ai_model/degradation/` scripts that build the dataset from the sources chosen in Section 12. When values are transcribed from papers, cite the source table on every row.
+- [ ] `ai_model/degradation/` scripts that build the dataset from the sources chosen in Section 12. *(started provisionally: `sources.yaml` registry + `retention.py` curve library for S1 PP/HDPE; 11 tests confirm the published D50 values are reproduced)* When values are transcribed from papers, cite the source table on every row.
 - [ ] Remove duplicates and invalid records; standardise units and category values.
 - [ ] Keep study, specimen and sample identifiers. Do not merge incompatible experiments without documenting the differences in polymer grade, specimen preparation, exposure and protocol (README §9).
 - [ ] Handle missing values transparently (report the missingness per feature; impute only with a stated method).
@@ -457,15 +457,15 @@ Done when:
 
 Tasks:
 
-- [ ] Pathway catalogue (`backend/app/decision/pathways.yaml`): direct reuse, cleaning and preparation for reuse, mechanical recycling, specialised recycling or treatment, energy recovery or disposal. Each entry has the README §7.3 fields: accepted polymers, permitted condition range or property requirements, contamination limits, required pre-processing, facility, expected output and quality, and cost/energy data where available. Every value carries a **source citation**.
+- [ ] *(skeleton done; real requirement values + sources still TODO)* Pathway catalogue (`backend/app/decision/pathways.yaml`): direct reuse, cleaning and preparation for reuse, mechanical recycling, specialised recycling or treatment, energy recovery or disposal. Each entry has the README §7.3 fields: accepted polymers, permitted condition range or property requirements, contamination limits, required pre-processing, facility, expected output and quality, and cost/energy data where available. Every value carries a **source citation**.
 - [ ] Local facility list (your city or campus): accepted materials and processes. **Needs you** to collect it (phone calls or council websites).
-- [ ] Feasibility checker: input (polymer + verification status, predicted condition + uncertainty, contamination, intended next use); output: feasible / infeasible / needs inspection, each with reasons.
+- [x] Feasibility checker (`backend/app/decision/suitability.py`): input (polymer + verification status, predicted condition + uncertainty, contamination, intended next use); output: feasible / infeasible / needs inspection, each with reasons.
 - [ ] Hard exclusions:
-  - [ ] Food-contact, medical, structural and other safety-critical reuse is never recommended from AI output alone (README §4.4).
-  - [ ] An unverified polymer leads to a "verify material first" step.
-  - [ ] High degradation uncertainty leads to an "inspect or test" step instead of a forced route (README §16).
-  - [ ] Pathways without an available facility are marked unavailable (README §16).
-- [ ] A unit test for every rule, plus a randomised test showing that no unsafe pathway can ever be returned as feasible.
+  - [x] Food-contact, medical, structural and other safety-critical reuse is never recommended from AI output alone (README §4.4).
+  - [x] An unverified polymer leads to a "verify material first" step.
+  - [x] High degradation uncertainty leads to an "inspect or test" step instead of a forced route (README §16).
+  - [x] Pathways without an available facility are marked unavailable (README §16).
+- [x] A unit test for every rule, plus an **exhaustive** test (>10,000 evidence combinations) showing that no unsafe pathway can ever be returned as feasible (`backend/tests/test_suitability.py`).
 
 Deliverables: the pathway catalogue with sources, the checker, and tests.
 

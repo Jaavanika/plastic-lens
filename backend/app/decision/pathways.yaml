@@ -1,0 +1,62 @@
+# Recovery-pathway catalogue (PLAN Section 15; README §4.4, §7.3).
+#
+# Every requirement must carry a `source`. A requirement whose source is
+# still "TODO" is reported as *unsourced* and is never used to declare a
+# pathway feasible: the checker answers "needs_inspection" instead.
+#
+# Facilities are deliberately empty until local data is collected
+# (PLAN Section 15). Without a known facility a pathway is "unavailable".
+
+pathways:
+  direct_reuse:
+    label: Direct reuse
+    order: 1
+    accepted_polymers: [PET, HDPE, PVC, LDPE, PP, PS]
+    requires: [no_visible_damage, contamination_clean, condition_low, not_safety_critical_use]
+    preprocessing: []
+    source: README §4.4 ("where the item is safe and suitable for the intended use")
+
+  prepare_for_reuse:
+    label: Cleaning and preparation for reuse
+    order: 2
+    accepted_polymers: [PET, HDPE, PVC, LDPE, PP, PS]
+    requires: [no_visible_damage, contamination_removable, condition_low_or_moderate, not_safety_critical_use]
+    preprocessing: [cleaning, inspection]
+    source: README §4.4
+
+  mechanical_recycling:
+    label: Mechanical recycling
+    order: 3
+    accepted_polymers: [PET, HDPE, PVC, LDPE, PP, PS]
+    requires: [polymer_verified, contamination_not_hazardous]
+    preprocessing: [sorting by polymer, washing]
+    source: README §4.4; polymer-specific sorting is required for mechanical recycling streams (TODO add a recycler specification)
+
+  specialised_treatment:
+    label: Specialised recycling or treatment
+    order: 4
+    accepted_polymers: [PET, HDPE, PVC, LDPE, PP, PS]
+    requires: [facility_confirmed]
+    preprocessing: [facility-specific]
+    source: README §4.4 ("where locally available and technically appropriate")
+
+  energy_recovery_or_disposal:
+    label: Energy recovery or disposal
+    order: 5
+    accepted_polymers: [PET, HDPE, PVC, LDPE, PP, PS]
+    requires: [permitted_locally]
+    preprocessing: []
+    last_resort: true
+    source: README §4.4 ("only where permitted and where higher-value recovery is unsuitable")
+
+# Uses for which reuse is never decided by an AI estimate (README §4.4).
+safety_critical_uses: [food_contact, medical, structural, child_product]
+
+# Condition categories from elongation-at-break retention (Section 12, Option A).
+# Cut-points await supervisor approval; until then condition is "unknown"
+# unless measured.
+condition_cutpoints:
+  status: pending_supervisor_approval
+  source: TODO
+
+facilities: []

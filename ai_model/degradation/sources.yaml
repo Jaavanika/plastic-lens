@@ -1,0 +1,37 @@
+# Registry of degradation data sources (PLAN Section 12-13).
+# Every value used by the degradation model must trace back to an entry here.
+# See documentation/degradation_data_review.md for the review.
+
+sources:
+  S1:
+    citation: >-
+      Kim, S.; Lee, Y.; Kim, C.; Choi, S. Analysis of Mechanical Property Degradation
+      of Outdoor Weather-Exposed Polymers. Polymers 2022, 14(2), 357.
+    doi: 10.3390/polym14020357
+    url: https://pmc.ncbi.nlm.nih.gov/articles/PMC8782030/
+    licence: CC BY 4.0
+    exposure: outdoor
+    site: Seosan, Korea (36°55'N, 126°21'E), Köppen Cfa, south-facing at 37°, 2014-2017
+    annual_uv_mj_m2: 283.5        # four-year mean, measured at the site
+    dose_range_mj_m2: [0, 1020]
+    method: tensile test, ISO 527 type 1A (PC, PP, 4 mm) / ASTM D638 type I (PBT, HDPE, 3.2 mm); 5 specimens per step
+    target: fracture-strain (elongation at break) retention
+    # Table 5: P(D) = Pmin + (Pmax - Pmin) / (1 + exp(k (D - D0))), D in MJ/m2
+    curves:
+      PP:   {Pmax: 1.0, Pmin: 0.467, k: 1.0493e-2, D0: 309.338, R2: 0.952, D50: 567.934}
+      HDPE: {Pmax: 1.0, Pmin: 0.195, k: 9.6216e-3, D0: 355.052, R2: 0.968, D50: 406.344}
+      # Not in the app's six polymers, kept for completeness and tests:
+      PC:   {Pmax: 1.0, Pmin: 0.165, k: 7.3182e-3, D0: 365.357, R2: 0.984, D50: 420.199}
+      PBT:  {Pmax: 1.0, Pmin: 0.272, k: 1.5251e-2, D0: 212.623, R2: 0.933, D50: 264.246}
+    notes: >-
+      Material grades are specific commercial grades; their additive content is not
+      given, so the curves describe that material, not all PP or HDPE. Tensile
+      yield strength and modulus showed no noticeable change.
+
+# Annual UV irradiance used to turn "time outdoors" into cumulative dose.
+# Add a region only with a citable measurement or climatology source.
+regions:
+  seosan_kr:
+    label: Seosan, South Korea (Köppen Cfa)
+    annual_uv_mj_m2: 283.5
+    source: S1
